@@ -1,0 +1,18 @@
+name: Man10_Bank_Robber
+version: '${project.version}'
+main: yusama125718.man10_bank_robber.Man10_Bank_Robber
+api-version: 1.17
+
+commands:
+  mbr:
+
+permissions:
+  mbr.op:
+    default: op
+  mbr.start:
+    default: op
+  mbr.p:
+    default: true
+
+depend:
+  - Vault

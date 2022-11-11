@@ -1,0 +1,17 @@
+mysql:
+  host: "localhost"
+  port: "3306"
+  user: "root"
+  pass: ""
+  db: "mbr_data"
+
+system: true
+entrymode: true
+entrytime: 30
+minplayer: 6
+maxplayer: 10
+cost: 0
+readytime: 60
+gametime: 300
+nexus: 100
+nexusdamage: 1000
