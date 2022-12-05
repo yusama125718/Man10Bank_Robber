@@ -19,17 +19,20 @@ import static yusama125718.man10_bank_robber.Man10_Bank_Robber.shops;
 
 public class Config {
     private static final File folder = new File(mbr.getDataFolder().getAbsolutePath() + File.separator + "shops");
+    private static File shopfile;
 
     public static void LoadFile(){
         if (mbr.getDataFolder().listFiles() != null){
             for (File file : Objects.requireNonNull(mbr.getDataFolder().listFiles())) {
                 if (file.getName().equals("shops")) {
                     LoadShops(file);
+                    shopfile = file;
                     return;
                 }
             }
         }
         if (folder.mkdir()) {
+            shopfile = folder;
             Bukkit.broadcast(Component.text("§e§l[MBR] §rフォルダを作成しました"), "mbr.op");
         } else {
             Bukkit.broadcast(Component.text("§e§l[MBR] §rフォルダの作成に失敗しました"), "mbr.op");
@@ -76,7 +79,7 @@ public class Config {
                 e.printStackTrace();
                 Bukkit.broadcast(Component.text("§e§l[MBR] §rbuymenu.ymlの保存に失敗しました"),"mserial.op");
             }
-        });
+        }).start();
         return new Data.BuyMenuData(Bukkit.createInventory(null,9, Component.text("[MBR] BuyMenu")), new HashMap<>(), new ArrayList<>());
     }
 
@@ -97,7 +100,7 @@ public class Config {
                 e.printStackTrace();
                 Bukkit.broadcast(Component.text("§e§l[MBR] §rbuymenu.ymlの保存に失敗しました"),"mserial.op");
             }
-        });
+        }).start();
     }
 
     public static void LoadShops(File files){
@@ -122,5 +125,23 @@ public class Config {
         }
     }
 
-
+    public static void SaveShops(String name, Data.ShopData data){
+        new Thread(() -> {
+            File folder = new File(shopfile.getAbsolutePath() + File.separator + name +".yml");
+            YamlConfiguration yml = new YamlConfiguration();
+            yml.set("size", data.inv.getSize());
+            for (int i = 0;i < data.inv.getSize();i++){
+                if (data.inv.getItem(i) == null) continue;
+                yml.set("icon",data.inv.getItem(i));
+                yml.set("item",data.items.get(data.inv.getItem(i)));
+                yml.set("price",data.values.get(data.inv.getItem(i)));
+            }
+            try {
+                yml.save(folder);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Bukkit.broadcast(Component.text("§e§l[MBR] §rbuymenu.ymlの保存に失敗しました"),"mserial.op");
+            }
+        }).start();
+    }
 }

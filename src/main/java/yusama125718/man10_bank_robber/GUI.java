@@ -63,8 +63,8 @@ public class GUI {
         p.openInventory(inv);
     }
 
-    public static void AssignmentShop(Integer slot, ItemStack item){
-        Inventory inv = Bukkit.createInventory(null,54, Component.text("[MBR] AssignmentShop"));
+    public static void AssignmentBuy(Integer slot, ItemStack item, Player p){
+        Inventory inv = Bukkit.createInventory(null,54, Component.text("[MBR] AssignmentBuy"));
         int i = 0;
         for (String s : shops.keySet()){
             inv.setItem(i,shops.get(s).icon);
@@ -75,6 +75,34 @@ public class GUI {
         for (int j = 47; j < 52; j++) inv.setItem(j, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,slot.toString(),1));
         inv.setItem(52, GetItem(Material.GOLD_NUGGET,1,"お金を表示する",1));
         inv.setItem(53, GetItem(Material.BARRIER,1,"割り当てない",1));
+        p.openInventory(inv);
+    }
+
+    public static void AssignmentShop(Integer slot, ItemStack item, Player p){
+        Inventory inv = Bukkit.createInventory(null,54, Component.text("[MBR] AssignmentShop"));
+        inv.setItem(22, new SkullMaker().withSkinUrl(numberTextures.get(7)).withName("7").build());
+        inv.setItem(23, new SkullMaker().withSkinUrl(numberTextures.get(8)).withName("8").build());
+        inv.setItem(24, new SkullMaker().withSkinUrl(numberTextures.get(9)).withName("9").build());
+        inv.setItem(31, new SkullMaker().withSkinUrl(numberTextures.get(4)).withName("4").build());
+        inv.setItem(32, new SkullMaker().withSkinUrl(numberTextures.get(5)).withName("5").build());
+        inv.setItem(33, new SkullMaker().withSkinUrl(numberTextures.get(6)).withName("6").build());
+        inv.setItem(34, GetItem(Material.TNT, 1, "クリア", 0));
+        inv.setItem(40, new SkullMaker().withSkinUrl(numberTextures.get(1)).withName("1").build());
+        inv.setItem(41, new SkullMaker().withSkinUrl(numberTextures.get(2)).withName("2").build());
+        inv.setItem(42, new SkullMaker().withSkinUrl(numberTextures.get(3)).withName("3").build());
+        inv.setItem(43, GetItem(Material.REDSTONE_BLOCK, 1, "１文字消す", 0));
+        inv.setItem(50, new SkullMaker().withSkinUrl(numberTextures.get(0)).withName("0").build());
+        inv.setItem(52, GetItem(Material.EMERALD_BLOCK, 1, "決定", 1));
+        inv.setItem(28, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,slot.toString(),1));
+        inv.setItem(29, GetItem(Material.BLACK_STAINED_GLASS_PANE,1,"下に販売アイテムをセットする",1));
+        inv.setItem(30, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,slot.toString(),1));
+        inv.setItem(37, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,slot.toString(),1));
+        inv.setItem(39, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,slot.toString(),1));
+        inv.setItem(45, GetItem(Material.GOLD_NUGGET,1,"お金を表示する",1));
+        inv.setItem(46, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,slot.toString(),1));
+        inv.setItem(47, item);
+        inv.setItem(48, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,slot.toString(),1));
+        p.openInventory(inv);
     }
 
     public static void EditShopMenu(Player p, Integer size, String name){
@@ -85,5 +113,12 @@ public class GUI {
 
     public static void ShopMenu(Player p,String shop){
         p.openInventory(shops.get(shop).inv);
+    }
+
+    public static void EditShopIcon(Player p){
+        Inventory inv = Bukkit.createInventory(null,9, Component.text("[MBR] EditIcon"));
+        for (int i = 0; i < 8; i++) if (i != 4) inv.setItem(i, GetItem(Material.WHITE_STAINED_GLASS_PANE,1,"空きスロットにアイコンをセット",1));
+        inv.setItem(8, GetItem(Material.RED_STAINED_GLASS_PANE,1,"決定",1));
+        p.openInventory(inv);
     }
 }

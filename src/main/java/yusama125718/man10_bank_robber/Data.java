@@ -73,4 +73,15 @@ public class Data {
             values = Values;
         }
     }
+
+    public static class AddItemData{
+        public String name;
+        public HashMap<ItemStack, Double> values = new HashMap<>();  //アイテム <見た目,値段>
+        public HashMap<ItemStack, ItemStack> items = new HashMap<>();  //アイテム <見た目,商品>
+        public AddItemData(String Name, HashMap<ItemStack, Double> Values, HashMap<ItemStack, ItemStack> Items){
+            name = Name;
+            values = Values;
+            items = Items;
+        }
+    }
 }

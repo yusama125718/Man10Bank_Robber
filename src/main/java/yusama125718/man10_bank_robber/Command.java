@@ -462,7 +462,6 @@ public class Command implements CommandExecutor, TabCompleter {
                     }
                     GUI.EditShopMenu((Player) sender, size, args[2]);
                 }
-
         }
         sender.sendMessage("§e§l[MBR] §r/mbr help でhelpを表示");
         return true;
