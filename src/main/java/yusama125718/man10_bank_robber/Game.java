@@ -119,6 +119,7 @@ public class Game {
         gamestatus = Data.Status.fight;
         for (Player p : players.keySet()){
             p.closeInventory();
+            players.get(p).inv = p.getInventory();
         }
     }
 
@@ -133,25 +134,49 @@ public class Game {
 
             case ready:
             case fight:
-                Function.Broadcast("§e§l[MBR] §rゲームが強制終了しました。");
-                Function.Broadcast("§e§l[MBR] §rベットしたお金は返金されます");
+                for (Player p: entryplayer.keySet()) vaultapi.deposit(p.getUniqueId(),entryplayer.get(p).bet + cost);
                 for (Player p :players.keySet()){
                     p.getInventory().clear();
                     p.getInventory().setContents(players.get(p).saveinv.getContents());
                     p.getInventory().setArmorContents(players.get(p).saveinv.getArmorContents());
                     p.updateInventory();
                 }
+                Function.Broadcast("§e§l[MBR] §rゲームが強制終了しました。");
+                Function.Broadcast("§e§l[MBR] §rベットしたお金は返金されます");
                 break;
 
             case end:
                 for (Player p :players.keySet()){
+                    if (players.get(p).goldheld > 0){
+                        if (players.get(p).team.equals(Data.Team.yellow)) bluenexus += players.get(p).goldheld * nexusdamage;
+                        else yellownexus += players.get(p).goldheld * nexusdamage;
+                    }
                     p.getInventory().clear();
                     p.getInventory().setContents(players.get(p).saveinv.getContents());
                     p.getInventory().setArmorContents(players.get(p).saveinv.getArmorContents());
                     p.updateInventory();
                 }
+                if (bluenexus > yellownexus){
+                    for (Player p : players.keySet()){
+                        if (players.get(p).team.equals(Data.Team.blue)){
+                            vaultapi.deposit(p.getUniqueId(), bluenexus / 5);
+                        } else {
+                            vaultapi.deposit(p.getUniqueId(), yellownexus / 5);
+                        }
+                    }
+                    Function.Broadcast("§e§l[MBR] §r青チームの勝利！");
+                    Function.Broadcast("§e§l[MBR] §r勝者にお金が分配されます");
+                } else if (bluenexus < yellownexus){
+                    Function.Broadcast("§e§l[MBR] §r黄チームの勝利！");
+                    Function.Broadcast("§e§l[MBR] §r勝者にお金が分配されます");
+                } else {
+                    Function.Broadcast("§e§l[MBR] §r引き分け！");
+                    Function.Broadcast("§e§l[MBR] §rベットしたお金は返金されます");
+                    for (Player p: entryplayer.keySet()) vaultapi.deposit(p.getUniqueId(),entryplayer.get(p).bet + cost);
+                }
                 break;
         }
+        players.clear();
         freeze = false;
         pause = true;
         gamestatus = Data.Status.nogame;

@@ -7,9 +7,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
@@ -543,5 +548,87 @@ public class Event implements Listener {
         addshoplist.remove((Player) e.getWhoClicked());
         Config.SaveShops(addshoplist.get((Player) e.getWhoClicked()).name, add);
         e.getWhoClicked().sendMessage("§e§l[MBR] §r追加しました");
+    }
+
+    @EventHandler
+    public void PlayerDeath(PlayerDeathEvent e){
+        if (!gamestatus.equals(Data.Status.fight) && !gamestatus.equals(Data.Status.ready)) return;
+        if (!players.containsKey(e.getPlayer())) return;
+        e.getPlayer().getInventory().clear();
+        e.getPlayer().getInventory().setContents(players.get(e.getPlayer()).inv.getContents());
+        e.getPlayer().getInventory().setArmorContents(players.get(e.getPlayer()).inv.getArmorContents());
+        e.getPlayer().updateInventory();
+        if (players.get(e.getPlayer()).goldheld > 0){
+            if (players.get(e.getPlayer()).team.equals(Data.Team.blue)) yellownexus += players.get(e.getPlayer()).goldheld * nexusdamage;
+            else if (players.get(e.getPlayer()).team.equals(Data.Team.yellow)) bluenexus += players.get(e.getPlayer()).goldheld * nexusdamage;
+            players.get(e.getPlayer()).goldheld = 0;
+            for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r"+e.getPlayer().getName()+"の持っていたお金が金庫に戻った");
+        }
+        if (players.get(e.getPlayer()).team.equals(Data.Team.yellow)) e.getPlayer().setBedSpawnLocation(yspawn);
+        else e.getPlayer().setBedSpawnLocation(bspawn);
+    }
+
+    @EventHandler
+    public void SetNexus(BlockPlaceEvent e){
+        if (editnexus.isEmpty()) return;
+        if (!editnexus.containsKey(e.getPlayer())) return;
+        if (!e.canBuild()) return;
+        if (editnexus.get(e.getPlayer()).equals(Data.Team.blue)) bnexus.add(e.getBlockReplacedState().getLocation());
+        else ynexus.add(e.getBlockReplacedState().getLocation());
+        e.getPlayer().sendMessage("§e§l[MBR] §r登録しました");
+    }
+
+    @EventHandler
+    public void BreakNexus(BlockBreakEvent e){
+        if (!ynexus.contains(e.getBlock().getLocation()) && !bnexus.contains(e.getBlock().getLocation())) return;
+        e.setCancelled(true);
+        if (!gamestatus.equals(Data.Status.fight) || !players.containsKey(e.getPlayer())) return;
+        if (players.get(e.getPlayer()).team.equals(Data.Team.blue) && ynexus.contains(e.getBlock().getLocation())){
+            players.get(e.getPlayer()).goldheld++;
+            yellownexus -= nexusdamage;
+            e.getPlayer().sendMessage("§e§l[MBR] §rお金を盗みました。拠点に戻って保存しましょう。");
+            for (Player p : players.keySet()) if (players.get(p).team.equals(Data.Team.yellow)) p.sendMessage("§e§l[MBR] §r金庫が攻撃されています！");
+        }
+        else if (players.get(e.getPlayer()).team.equals(Data.Team.yellow) && bnexus.contains(e.getBlock().getLocation())){
+            players.get(e.getPlayer()).goldheld++;
+            bluenexus -= nexusdamage;
+            e.getPlayer().sendMessage("§e§l[MBR] §rお金を盗みました。拠点に戻って保存しましょう。");
+            for (Player p : players.keySet()) if (players.get(p).team.equals(Data.Team.yellow)) p.sendMessage("§e§l[MBR] §r金庫が攻撃されています！");
+        }
+    }
+
+    @EventHandler
+    public void GetHeld(PlayerInteractEvent e){
+        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || !players.containsKey(e.getPlayer())) return;
+        if (players.get(e.getPlayer()).team.equals(Data.Team.yellow) && ynexus.contains(e.getClickedBlock().getState().getLocation()) && players.get(e.getPlayer()).goldheld != 0) {
+            players.get(e.getPlayer()).attack = players.get(e.getPlayer()).goldheld;
+            e.getPlayer().sendMessage("§e§l[MBR] §r盗んだお金($"+ players.get(e.getPlayer()).goldheld * nexusdamage +")をしまいました");
+            e.getPlayer().sendMessage("§e§l[MBR] §rあなたが盗んだお金の総額：" + players.get(e.getPlayer()).attack * nexusdamage);
+            for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r"+e.getPlayer().getName()+"が$"+players.get(e.getPlayer()).goldheld * nexusdamage+"持ち帰りました！");
+            players.get(e.getPlayer()).goldheld = 0;
+            if (bluenexus <= 0){
+                for (Player p: players.keySet()){
+                    if (!players.get(p).team.equals(Data.Team.yellow)) continue;
+                    if (players.get(p).goldheld >= 0) return;
+                }
+                gamestatus = Data.Status.end;
+                Game.GameEnd();
+            }
+        }
+        else if (players.get(e.getPlayer()).team.equals(Data.Team.blue) && bnexus.contains(e.getClickedBlock().getState().getLocation()) && players.get(e.getPlayer()).goldheld != 0) {
+            players.get(e.getPlayer()).attack = players.get(e.getPlayer()).goldheld;
+            e.getPlayer().sendMessage("§e§l[MBR] §r盗んだお金($"+ players.get(e.getPlayer()).goldheld * nexusdamage +")をしまいました");
+            e.getPlayer().sendMessage("§e§l[MBR] §rあなたが盗んだお金の総額：" + players.get(e.getPlayer()).attack * nexusdamage);
+            for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r"+e.getPlayer().getName()+"が$"+players.get(e.getPlayer()).goldheld * nexusdamage+"持ち帰りました！");
+            players.get(e.getPlayer()).goldheld = 0;
+            if (yellownexus <= 0){
+                for (Player p: players.keySet()){
+                    if (!players.get(p).team.equals(Data.Team.blue)) continue;
+                    if (players.get(p).goldheld >= 0) return;
+                }
+                gamestatus = Data.Status.end;
+                Game.GameEnd();
+            }
+        }
     }
 }

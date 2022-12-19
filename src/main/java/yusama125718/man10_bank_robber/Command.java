@@ -50,6 +50,7 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §r/mbr nexusdamage [金額] 金庫の攻撃１回あたりの金額を設定します");
                             sender.sendMessage("§e§l[MBR] §r/mbr editbuymenu [Inventorysize] shopを作成します");
                             sender.sendMessage("§e§l[MBR] §r/mbr createshop [Inventorysize] [shop名] shopを作成します");
+                            sender.sendMessage("§e§l[MBR] §r/mbr [b/y] setnexus nexusをセットします");
                             sender.sendMessage("============ 一般 ============");
                         } else if (sender.hasPermission("mbr.start")) {
                             sender.sendMessage("§e§l[MBR] §r/mbr start ゲームを開始します");
@@ -191,6 +192,15 @@ public class Command implements CommandExecutor, TabCompleter {
                         sender.sendMessage("§e§l[MBR] §rセットしました");
                         return true;
 
+                    case "end":
+                        if (!sender.hasPermission("mbr.start")){
+                            sender.sendMessage("§e§l[MBR] §r/mbrでメニューを表示");
+                            return true;
+                        }
+                        if (editnexus.isEmpty() || !editnexus.containsKey((Player) sender)) return true;
+                        editnexus.remove((Player) sender);
+                        sender.sendMessage("§e§l[MBR] §r登録モードを終了します");
+                        return true;
                 }
                 break;
 
@@ -253,7 +263,18 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §r/mbr help でhelpを表示");
                             return true;
                         }
-                        if (!gamestatus.equals(Data.Status.entry) || entrymode){
+                        if (args[1].equals("setnexus")){
+                            editnexus.put((Player) sender, Data.Team.blue);
+                            sender.sendMessage("§e§l[MBR] §rネクサスを設置してください");
+                            sender.sendMessage("§e§l[MBR] §r設置したら/mbr endを実行してください");
+                            return true;
+                        }
+                        else if (args[1].equals("deletenexus")){
+                            bnexus.clear();
+                            sender.sendMessage("§e§l[MBR] §rネクサスを削除しました");
+                            return true;
+                        }
+                        else if (!gamestatus.equals(Data.Status.entry) || entrymode){
                             sender.sendMessage("§e§l[MBR] §r今はエントリーできません");
                             return true;
                         }
@@ -277,7 +298,12 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §r/mbr help でhelpを表示");
                             return true;
                         }
-                        if (!gamestatus.equals(Data.Status.entry) || entrymode){
+                        else if (args[1].equals("deletenexus")){
+                            ynexus.clear();
+                            sender.sendMessage("§e§l[MBR] §rネクサスを削除しました");
+                            return true;
+                        }
+                        else if (!gamestatus.equals(Data.Status.entry) || entrymode){
                             sender.sendMessage("§e§l[MBR] §r今はエントリーできません");
                             return true;
                         }

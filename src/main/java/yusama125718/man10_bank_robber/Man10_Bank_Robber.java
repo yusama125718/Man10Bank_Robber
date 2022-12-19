@@ -36,9 +36,12 @@ public final class Man10_Bank_Robber extends JavaPlugin {
     public static Location yspawn;
     public static Data.BuyMenuData buymenu;
     public static List<UUID> dissableplayers = new ArrayList<>();
+    public static List<Location> ynexus = new ArrayList<>();
+    public static List<Location> bnexus = new ArrayList<>();
     public static HashMap<String, Data.ShopData> shops = new HashMap<>();
     public static HashMap<Player, Data.PlayerData> players = new HashMap<>();
     public static HashMap<Player, Data.PlayerData> entryplayer = new HashMap<>();
+    public static HashMap<Player, Data.Team> editnexus = new HashMap<>();
 
     Consumer<BukkitTask> ontimer = bukkitTask -> {
         if (pause || !system) return;
