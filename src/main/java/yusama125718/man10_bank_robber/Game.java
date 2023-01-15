@@ -12,6 +12,9 @@ import java.util.Random;
 import static yusama125718.man10_bank_robber.Man10_Bank_Robber.*;
 
 public class Game {
+    private static Double blueinit;
+    private static Double yellowinit;
+
     public static void Waiting(){
         timer = entrytime;
         gamestatus = Data.Status.entry;
@@ -112,8 +115,12 @@ public class Game {
 
     public static void Fight(){
         BossBar.ShowNexus();
-        bluenexus = nexus;
-        yellownexus = nexus;
+        for (Player p : players.keySet()){
+            if (players.get(p).team.equals(Data.Team.blue)) bluenexus += players.get(p).bet;
+            else yellownexus += players.get(p).bet;
+        }
+        blueinit = bluenexus;
+        yellowinit = yellownexus;
         freeze = false;
         timer = gametime;
         gamestatus = Data.Status.fight;
@@ -156,17 +163,26 @@ public class Game {
                     p.getInventory().setArmorContents(players.get(p).saveinv.getArmorContents());
                     p.updateInventory();
                 }
-                if (bluenexus > yellownexus){
-                    for (Player p : players.keySet()){
+                Function.Broadcast("§e§l[MBR] §r青チームの獲得金額：" + (yellowinit - yellownexus));
+                Function.Broadcast("§e§l[MBR] §r黄チームの獲得金額：" + (blueinit - bluenexus));
+                if ((bluenexus - blueinit) > (yellownexus - yellowinit)){
+                    for (Player p : players.keySet()) {
                         if (players.get(p).team.equals(Data.Team.blue)){
-                            vaultapi.deposit(p.getUniqueId(), bluenexus / 5);
+                            vaultapi.deposit(p.getUniqueId(), (bluenexus - blueinit) / 5 + players.get(p).bet);
                         } else {
                             vaultapi.deposit(p.getUniqueId(), yellownexus / 5);
                         }
                     }
                     Function.Broadcast("§e§l[MBR] §r青チームの勝利！");
                     Function.Broadcast("§e§l[MBR] §r勝者にお金が分配されます");
-                } else if (bluenexus < yellownexus){
+                } else if ((blueinit - bluenexus) < (yellowinit - yellownexus)){
+                    for (Player p : players.keySet()) {
+                        if (players.get(p).team.equals(Data.Team.yellow)){
+                            vaultapi.deposit(p.getUniqueId(), (yellownexus - yellowinit) / 5 + players.get(p).bet);
+                        } else {
+                            vaultapi.deposit(p.getUniqueId(), bluenexus / 5);
+                        }
+                    }
                     Function.Broadcast("§e§l[MBR] §r黄チームの勝利！");
                     Function.Broadcast("§e§l[MBR] §r勝者にお金が分配されます");
                 } else {

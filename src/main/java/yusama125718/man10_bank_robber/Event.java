@@ -1,15 +1,17 @@
 package yusama125718.man10_bank_robber;
 
-import it.unimi.dsi.fastutil.Hash;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -331,12 +333,12 @@ public class Event implements Listener {
 
     @EventHandler
     public void EditShopClick(InventoryClickEvent e){
+        if (e.getCurrentItem() == null) return;
         String title = null;
         Component component = e.getView().title();
         if (component instanceof TextComponent text) title = text.content();
         if (title == null || !title.startsWith("[MBR EditShop] ")) return;
-        if (e.getInventory().getSize() - 9 > e.getRawSlot()) return;
-        e.setCancelled(true);
+        if (!e.getCurrentItem().getType().equals(Material.RED_STAINED_GLASS_PANE) || !e.getCurrentItem().hasItemMeta() || !e.getCurrentItem().getItemMeta().hasCustomModelData() || e.getCurrentItem().getItemMeta().getCustomModelData() != 1) return;
         HashMap<Integer, ItemStack> items = new HashMap<>();
         List<Integer> addlist = new ArrayList<>();
         Inventory addinv = Bukkit.createInventory(null,e.getInventory().getSize() - 9, Component.text("[MBR] BuyMenu"));
@@ -357,170 +359,150 @@ public class Event implements Listener {
     @EventHandler
     public void AssignmentShopClick(InventoryClickEvent e){
         if (!e.getView().title().equals(text("[MBR] AssignmentShop"))) return;
+        if (e.getClickedInventory() == null || e.getClickedInventory().getSize() == 41) return;
+        e.setCancelled(true);
         switch (e.getRawSlot()) {
-            case 50: //0
-                e.setCancelled(true);
+            case 50 -> { //0
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(0)).withName("0").build());
                     break;
                 }
-                break;
-
-            case 40: //1
-                e.setCancelled(true);
+            }
+            case 40 -> { //1
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(1)).withName("1").build());
                     break;
                 }
-                break;
-
-            case 41: //2
-                e.setCancelled(true);
+            }
+            case 41 -> { //2
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(2)).withName("2").build());
                     break;
                 }
-                break;
-
-            case 42: //3
-                e.setCancelled(true);
+            }
+            case 42 -> { //3
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(3)).withName("3").build());
                     break;
                 }
-                break;
-
-            case 31: //4
-                e.setCancelled(true);
+            }
+            case 31 -> { //4
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(4)).withName("4").build());
                     break;
                 }
-                break;
-
-            case 32: //5
-                e.setCancelled(true);
+            }
+            case 32 -> { //5
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(5)).withName("5").build());
                     break;
                 }
-                break;
-
-            case 33: //6
-                e.setCancelled(true);
+            }
+            case 33 -> { //6
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(6)).withName("6").build());
                     break;
                 }
-                break;
-
-            case 22: //7
-                e.setCancelled(true);
+            }
+            case 22 -> { //7
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(7)).withName("7").build());
                     break;
                 }
-                break;
-
-            case 23: //8
-                e.setCancelled(true);
+            }
+            case 23 -> { //8
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(8)).withName("8").build());
                     break;
                 }
-                break;
-
-            case 24: //9
-                e.setCancelled(true);
+            }
+            case 24 -> { //9
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     e.getInventory().setItem(i, new SkullMaker().withSkinUrl(numberTextures.get(9)).withName("9").build());
                     break;
                 }
-                break;
-
-            case 34: //clear
-                e.setCancelled(true);
+            }
+            case 34 -> { //clear
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) == null) continue;
                     e.getInventory().setItem(i, null);
                 }
-                break;
-
-            case 43: //delete
-                e.setCancelled(true);
+            }
+            case 43 -> { //delete
                 for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) != null) continue;
                     if (i == 0) break;
+                    if (i == 8) e.getInventory().setItem(i, null);
                     e.getInventory().setItem(i - 1, null);
-                    break;
                 }
-                break;
-
-            case 45:
-                e.setCancelled(true);
+            }
+            case 45 -> {
                 List<Integer> moneylist = new ArrayList<>();
                 if (money.containsKey((Player) e.getWhoClicked())) moneylist = money.get((Player) e.getWhoClicked());
                 String name = null;
                 Component component = e.getInventory().getItem(30).getItemMeta().displayName();
                 if (component instanceof TextComponent text) name = text.content();
                 moneylist.add(Integer.parseInt(name));
-                if (editplayerlist.get((Player) e.getWhoClicked()).size() == 0){
+                if (editplayerlist.get((Player) e.getWhoClicked()).size() == 0) {
                     GUI.EditShopIcon((Player) e.getWhoClicked());
                 } else {
                     int next = editplayerlist.get((Player) e.getWhoClicked()).get(0);
                     GUI.AssignmentShop(next, editplayer.get((Player) e.getWhoClicked()).get(next), (Player) e.getWhoClicked());
                 }
-                return;
-
-            case 52:
-                e.setCancelled(true);
+            }
+            case 52 -> {
                 if (e.getInventory().getItem(38) == null) return;
                 StringBuilder number = new StringBuilder();
-                for (int i = 0; i < 9; i++){
+                System.out.println(new SkullMaker().withSkinUrl(numberTextures.get(1)).withName("1").build());
+                for (int i = 0; i < 9; i++) {
                     if (e.getInventory().getItem(i) == null) continue;
-                    if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(0)).withName("0").build())) number.append("0");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(1)).withName("1").build())) number.append("1");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(2)).withName("2").build())) number.append("2");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(3)).withName("3").build())) number.append("3");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(4)).withName("4").build())) number.append("4");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(5)).withName("5").build())) number.append("5");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(6)).withName("6").build())) number.append("6");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(7)).withName("7").build())) number.append("7");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(8)).withName("8").build())) number.append("8");
-                    else if (e.getInventory().getItem(i).equals(new SkullMaker().withSkinUrl(numberTextures.get(9)).withName("9").build())) number.append("9");
+                    if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(0)).withName("0").build())) number.append("0");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(1)).withName("1").build())) number.append("1");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(2)).withName("2").build())) number.append("2");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(3)).withName("3").build())) number.append("3");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(4)).withName("4").build())) number.append("4");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(5)).withName("5").build())) number.append("5");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(6)).withName("6").build())) number.append("6");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(7)).withName("7").build())) number.append("7");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(8)).withName("8").build())) number.append("8");
+                    else if (e.getInventory().getItem(i).isSimilar(new SkullMaker().withSkinUrl(numberTextures.get(9)).withName("9").build())) number.append("9");
                 }
                 double price = Double.parseDouble(number.toString());
-                if (addshoplist.get((Player) e.getWhoClicked()).items == null){
+                if (addshoplist.get((Player) e.getWhoClicked()).items == null) {
                     HashMap<ItemStack, Double> values = new HashMap<>();
                     HashMap<ItemStack, ItemStack> items = new HashMap<>();
-                    values.put(e.getInventory().getItem(47),price);
-                    items.put(e.getInventory().getItem(47),e.getInventory().getItem(38));
+                    values.put(e.getInventory().getItem(47), price);
+                    items.put(e.getInventory().getItem(47), e.getInventory().getItem(38));
                     addshoplist.get((Player) e.getWhoClicked()).items = items;
                     addshoplist.get((Player) e.getWhoClicked()).values = values;
                 } else {
                     HashMap<ItemStack, Double> values = addshoplist.get((Player) e.getWhoClicked()).values;
                     HashMap<ItemStack, ItemStack> items = addshoplist.get((Player) e.getWhoClicked()).items;
-                    values.put(e.getInventory().getItem(47),price);
-                    items.put(e.getInventory().getItem(47),e.getInventory().getItem(38));
+                    values.put(e.getInventory().getItem(47), price);
+                    items.put(e.getInventory().getItem(47), e.getInventory().getItem(38));
                     addshoplist.get((Player) e.getWhoClicked()).items = items;
                     addshoplist.get((Player) e.getWhoClicked()).values = values;
                 }
-                if (editplayerlist.get((Player) e.getWhoClicked()).size() == 0){
+                if (editplayerlist.get((Player) e.getWhoClicked()).size() == 0) {
                     GUI.EditShopIcon((Player) e.getWhoClicked());
                 } else {
                     int next = editplayerlist.get((Player) e.getWhoClicked()).get(0);
                     GUI.AssignmentShop(next, editplayer.get((Player) e.getWhoClicked()).get(next), (Player) e.getWhoClicked());
                 }
+            }
+            case 38 -> {
+                e.setCancelled(false);
+            }
         }
     }
 
@@ -561,7 +543,7 @@ public class Event implements Listener {
         if (players.get(e.getPlayer()).goldheld > 0){
             if (players.get(e.getPlayer()).team.equals(Data.Team.blue)) yellownexus += players.get(e.getPlayer()).goldheld * nexusdamage;
             else if (players.get(e.getPlayer()).team.equals(Data.Team.yellow)) bluenexus += players.get(e.getPlayer()).goldheld * nexusdamage;
-            players.get(e.getPlayer()).goldheld = 0;
+            players.get(e.getPlayer()).goldheld = (double) 0;
             for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r"+e.getPlayer().getName()+"の持っていたお金が金庫に戻った");
         }
         if (players.get(e.getPlayer()).team.equals(Data.Team.yellow)) e.getPlayer().setBedSpawnLocation(yspawn);
@@ -581,16 +563,25 @@ public class Event implements Listener {
     @EventHandler
     public void BreakNexus(BlockBreakEvent e){
         if (!ynexus.contains(e.getBlock().getLocation()) && !bnexus.contains(e.getBlock().getLocation())) return;
+        if (e.getPlayer().hasPermission("mbr.start") && !gamestatus.equals(Data.Status.fight)) {
+            e.getPlayer().sendMessage("§e§l[MBR] §rネクサスを破壊しました");
+            if (ynexus.contains(e.getBlock().getLocation())) ynexus.remove(e.getBlock().getLocation());
+            else bnexus.remove(e.getBlock().getLocation());
+            mbr.getConfig().set("bnexus", bnexus);
+            mbr.getConfig().set("ynexus", ynexus);
+            mbr.saveConfig();
+            return;
+        }
         e.setCancelled(true);
         if (!gamestatus.equals(Data.Status.fight) || !players.containsKey(e.getPlayer())) return;
         if (players.get(e.getPlayer()).team.equals(Data.Team.blue) && ynexus.contains(e.getBlock().getLocation())){
-            players.get(e.getPlayer()).goldheld++;
+            players.get(e.getPlayer()).goldheld += nexusdamage;
             yellownexus -= nexusdamage;
             e.getPlayer().sendMessage("§e§l[MBR] §rお金を盗みました。拠点に戻って保存しましょう。");
             for (Player p : players.keySet()) if (players.get(p).team.equals(Data.Team.yellow)) p.sendMessage("§e§l[MBR] §r金庫が攻撃されています！");
         }
         else if (players.get(e.getPlayer()).team.equals(Data.Team.yellow) && bnexus.contains(e.getBlock().getLocation())){
-            players.get(e.getPlayer()).goldheld++;
+            players.get(e.getPlayer()).goldheld += nexusdamage;
             bluenexus -= nexusdamage;
             e.getPlayer().sendMessage("§e§l[MBR] §rお金を盗みました。拠点に戻って保存しましょう。");
             for (Player p : players.keySet()) if (players.get(p).team.equals(Data.Team.yellow)) p.sendMessage("§e§l[MBR] §r金庫が攻撃されています！");
@@ -602,10 +593,11 @@ public class Event implements Listener {
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || !players.containsKey(e.getPlayer())) return;
         if (players.get(e.getPlayer()).team.equals(Data.Team.yellow) && ynexus.contains(e.getClickedBlock().getState().getLocation()) && players.get(e.getPlayer()).goldheld != 0) {
             players.get(e.getPlayer()).attack = players.get(e.getPlayer()).goldheld;
-            e.getPlayer().sendMessage("§e§l[MBR] §r盗んだお金($"+ players.get(e.getPlayer()).goldheld * nexusdamage +")をしまいました");
-            e.getPlayer().sendMessage("§e§l[MBR] §rあなたが盗んだお金の総額：" + players.get(e.getPlayer()).attack * nexusdamage);
-            for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r"+e.getPlayer().getName()+"が$"+players.get(e.getPlayer()).goldheld * nexusdamage+"持ち帰りました！");
-            players.get(e.getPlayer()).goldheld = 0;
+            e.getPlayer().sendMessage("§e§l[MBR] §r盗んだお金($"+ players.get(e.getPlayer()).goldheld +")をしまいました");
+            e.getPlayer().sendMessage("§e§l[MBR] §rあなたが盗んだお金の総額：" + players.get(e.getPlayer()).attack);
+            for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r§e§l"+e.getPlayer().getName()+"§rが$"+players.get(e.getPlayer()).goldheld+"持ち帰りました！");
+            yellownexus += players.get(e.getPlayer()).goldheld;
+            players.get(e.getPlayer()).goldheld = (double) 0;
             if (bluenexus <= 0){
                 for (Player p: players.keySet()){
                     if (!players.get(p).team.equals(Data.Team.yellow)) continue;
@@ -617,10 +609,11 @@ public class Event implements Listener {
         }
         else if (players.get(e.getPlayer()).team.equals(Data.Team.blue) && bnexus.contains(e.getClickedBlock().getState().getLocation()) && players.get(e.getPlayer()).goldheld != 0) {
             players.get(e.getPlayer()).attack = players.get(e.getPlayer()).goldheld;
-            e.getPlayer().sendMessage("§e§l[MBR] §r盗んだお金($"+ players.get(e.getPlayer()).goldheld * nexusdamage +")をしまいました");
-            e.getPlayer().sendMessage("§e§l[MBR] §rあなたが盗んだお金の総額：" + players.get(e.getPlayer()).attack * nexusdamage);
-            for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r"+e.getPlayer().getName()+"が$"+players.get(e.getPlayer()).goldheld * nexusdamage+"持ち帰りました！");
-            players.get(e.getPlayer()).goldheld = 0;
+            e.getPlayer().sendMessage("§e§l[MBR] §r盗んだお金($"+ players.get(e.getPlayer()).goldheld +")をしまいました");
+            e.getPlayer().sendMessage("§e§l[MBR] §rあなたが盗んだお金の総額：" + players.get(e.getPlayer()).attack);
+            for (Player p : players.keySet()) p.sendMessage("§e§l[MBR] §r§9§l"+e.getPlayer().getName()+"§rが$"+players.get(e.getPlayer()).goldheld+"持ち帰りました！");
+            bluenexus += players.get(e.getPlayer()).goldheld;
+            players.get(e.getPlayer()).goldheld = (double) 0;
             if (yellownexus <= 0){
                 for (Player p: players.keySet()){
                     if (!players.get(p).team.equals(Data.Team.blue)) continue;
@@ -630,5 +623,11 @@ public class Event implements Listener {
                 Game.GameEnd();
             }
         }
+    }
+
+    @EventHandler
+    public void OnDamage(EntityDamageByEntityEvent e){
+        if (!e.getEntityType().equals(EntityType.PLAYER) || !e.getEntity().getWorld().equals(world) || (gamestatus.equals(Data.Status.fight) && players.containsKey((Player) e.getEntity()))) return;
+        e.setCancelled(true);
     }
 }

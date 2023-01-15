@@ -46,11 +46,11 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §r/mbr maxplayer [人数] 最大人数を変更します");
                             sender.sendMessage("§e§l[MBR] §r/mbr setbspawn 現在地をblueチームのスポーン地点にします");
                             sender.sendMessage("§e§l[MBR] §r/mbr setyspawn 現在地をyellowチームのスポーン地点にします");
-                            sender.sendMessage("§e§l[MBR] §r/mbr nexus [回数] 金庫の攻撃可能回数を設定します");
                             sender.sendMessage("§e§l[MBR] §r/mbr nexusdamage [金額] 金庫の攻撃１回あたりの金額を設定します");
                             sender.sendMessage("§e§l[MBR] §r/mbr editbuymenu [Inventorysize] shopを作成します");
                             sender.sendMessage("§e§l[MBR] §r/mbr createshop [Inventorysize] [shop名] shopを作成します");
                             sender.sendMessage("§e§l[MBR] §r/mbr [b/y] setnexus nexusをセットします");
+                            sender.sendMessage("§e§l[MBR] §r/mbr world 試合のワールドを設定します");
                             sender.sendMessage("============ 一般 ============");
                         } else if (sender.hasPermission("mbr.start")) {
                             sender.sendMessage("§e§l[MBR] §r/mbr start ゲームを開始します");
@@ -180,6 +180,8 @@ public class Command implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         bspawn = ((Player) sender).getLocation();
+                        mbr.getConfig().set("bspawn", bspawn);
+                        mbr.saveConfig();
                         sender.sendMessage("§e§l[MBR] §rセットしました");
                         return true;
 
@@ -189,6 +191,8 @@ public class Command implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         yspawn = ((Player) sender).getLocation();
+                        mbr.getConfig().set("yspawn", yspawn);
+                        mbr.saveConfig();
                         sender.sendMessage("§e§l[MBR] §rセットしました");
                         return true;
 
@@ -199,7 +203,21 @@ public class Command implements CommandExecutor, TabCompleter {
                         }
                         if (editnexus.isEmpty() || !editnexus.containsKey((Player) sender)) return true;
                         editnexus.remove((Player) sender);
+                        mbr.getConfig().set("bnexus", bnexus);
+                        mbr.getConfig().set("ynexus", ynexus);
+                        mbr.saveConfig();
                         sender.sendMessage("§e§l[MBR] §r登録モードを終了します");
+                        return true;
+
+                    case "world":
+                        if (!sender.hasPermission("mbr.start")){
+                            sender.sendMessage("§e§l[MBR] §r/mbrでメニューを表示");
+                            return true;
+                        }
+                        world = ((Player) sender).getWorld();
+                        mbr.getConfig().set("world", world.getName());
+                        mbr.saveConfig();
+                        sender.sendMessage("§e§l[MBR] §rワールドを"+ world.getName()+"に設定しました");
                         return true;
                 }
                 break;
@@ -296,6 +314,12 @@ public class Command implements CommandExecutor, TabCompleter {
                     case "y":
                         if (!sender.hasPermission("mbr.op")){
                             sender.sendMessage("§e§l[MBR] §r/mbr help でhelpを表示");
+                            return true;
+                        }
+                        if (args[1].equals("setnexus")){
+                            editnexus.put((Player) sender, Data.Team.yellow);
+                            sender.sendMessage("§e§l[MBR] §rネクサスを設置してください");
+                            sender.sendMessage("§e§l[MBR] §r設置したら/mbr endを実行してください");
                             return true;
                         }
                         else if (args[1].equals("deletenexus")){
@@ -414,22 +438,6 @@ public class Command implements CommandExecutor, TabCompleter {
                         }
                         cost = Double.parseDouble(args[1]);
                         mbr.getConfig().set("cost", cost);
-                        mbr.saveConfig();
-                        sender.sendMessage("§e§l[MBR] §r設定しました");
-                        return true;
-
-                    case "nexus":
-                        if (!sender.hasPermission("mbr.op")){
-                            sender.sendMessage("§e§l[MBR] §r/mbr help でhelpを表示");
-                            return true;
-                        }
-                        boolean isNumeric7 = args[1].matches("-?\\d+");
-                        if (!isNumeric7){
-                            sender.sendMessage("§e§l[MBR] §r数字が無効です");
-                            return true;
-                        }
-                        nexus = Double.parseDouble(args[1]);
-                        mbr.getConfig().set("nexus", nexus);
                         mbr.saveConfig();
                         sender.sendMessage("§e§l[MBR] §r設定しました");
                         return true;

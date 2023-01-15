@@ -5,6 +5,7 @@ mysql:
   pass: ""
   db: "mbr_data"
 
+world: world
 system: true
 entrymode: true
 entrytime: 30
@@ -13,5 +14,4 @@ maxplayer: 10
 cost: 0
 readytime: 60
 gametime: 300
-nexus: 100
 nexusdamage: 1000

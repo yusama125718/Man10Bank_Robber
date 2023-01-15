@@ -106,8 +106,8 @@ public class GUI {
     }
 
     public static void EditShopMenu(Player p, Integer size, String name){
-        Inventory inv = Bukkit.createInventory(null,size, Component.text("[MBR EditShop] "+ name));
-        for (int i = 45; i < 54;i++) inv.setItem(i, GetItem(Material.RED_STAINED_GLASS_PANE,1,"決定",1));
+        Inventory inv = Bukkit.createInventory(null,size + 9, Component.text("[MBR EditShop] "+ name));
+        for (int i = size; i < size + 9;i++) inv.setItem(i, GetItem(Material.RED_STAINED_GLASS_PANE,1,"決定",1));
         p.openInventory(inv);
     }
 

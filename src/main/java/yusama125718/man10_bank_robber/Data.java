@@ -29,24 +29,24 @@ public class Data {
         public Double money;    //Buyに使えるお金
         public Integer kill;    //kill数
         public Integer death;   //death数
-        public Integer goldheld; //盗んでいるお金(回数)
-        public Integer attack;    //持ち帰った回数
+        public Double goldheld; //盗んでいるお金
+        public Double attack;    //持ち帰ったお金
         public PlayerInventory inv;       //ゲーム中のインベントリ
         public PlayerInventory saveinv;   //ゲーム前のインベントリ
         public PlayerData(Team t){
             team = t;
             kill = 0;
             death = 0;
-            goldheld = 0;
-            attack = 0;
+            goldheld = (double) 0;
+            attack = (double) 0;
         }
         public PlayerData(Double b){
             bet = b;
             money = b;
             kill = 0;
             death = 0;
-            goldheld = 0;
-            attack = 0;
+            goldheld = (double) 0;
+            attack = (double) 0;
         }
     }
 

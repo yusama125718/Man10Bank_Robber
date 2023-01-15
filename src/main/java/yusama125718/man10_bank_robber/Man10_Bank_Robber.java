@@ -2,6 +2,7 @@ package yusama125718.man10_bank_robber;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,11 +28,13 @@ public final class Man10_Bank_Robber extends JavaPlugin {
     public static Double readytime;
     public static Double gametime;
     public static Double timer;
-    public static Double nexus;
     public static Double nexusdamage;   //ネクサスへの攻撃１回あたりのリワード
     public static Double bluenexus;
+    public static Double blueinit;
     public static Double yellownexus;
+    public static Double yellowinit;
     public static Double cost;
+    public static World world;
     public static Location bspawn;
     public static Location yspawn;
     public static Data.BuyMenuData buymenu;
@@ -66,8 +69,10 @@ public final class Man10_Bank_Robber extends JavaPlugin {
                 Game.GameEnd();
             } else {
                 BossBar.UpdateInfo("§e§l[MBR] §r§l試合中！ Time："+timer, readytime/timer);
-                BossBar.UpdateBlue("§e§l[MBR] §r§9§lBlueチーム §r§l金庫の残高："+bluenexus*nexusdamage, nexus/bluenexus);
-                BossBar.UpdateYellow("§e§l[MBR] §r§e§lYellowチーム §r§l金庫の残高："+yellownexus*nexusdamage, nexus/yellownexus);
+                if (blueinit/bluenexus < 1) BossBar.UpdateBlue("§e§l[MBR] §r§9§lBlueチーム §r§l金庫の残高："+bluenexus*nexusdamage, 1.0);
+                else BossBar.UpdateBlue("§e§l[MBR] §r§9§lBlueチーム §r§l金庫の残高："+bluenexus*nexusdamage, blueinit/bluenexus);
+                if (yellowinit/yellownexus < 1) BossBar.UpdateYellow("§e§l[MBR] §r§e§lYellowチーム §r§l金庫の残高："+yellownexus*nexusdamage, 1.0);
+                else BossBar.UpdateYellow("§e§l[MBR] §r§e§lYellowチーム §r§l金庫の残高："+yellownexus*nexusdamage, yellowinit/yellownexus);
             }
         }
     };
@@ -87,9 +92,13 @@ public final class Man10_Bank_Robber extends JavaPlugin {
         entrytime = mbr.getConfig().getDouble("entrytime");
         readytime = mbr.getConfig().getDouble("readytime");
         gametime = mbr.getConfig().getDouble("gametime");
-        nexus = mbr.getConfig().getDouble("nexus");
         nexusdamage = mbr.getConfig().getDouble("nexusdamage");
         buymenu = Config.LoadBuyMenu();
+        List<?> setlist = mbr.getConfig().getList("bnexus");
+        if (setlist != null) for (Object o : setlist) bnexus.add((Location) o);
+        setlist = mbr.getConfig().getList("ynexus");
+        if (setlist != null) for (Object o : setlist) ynexus.add((Location) o);
+        world = Bukkit.getWorld(mbr.getConfig().getString("world"));
         if (mbr.getConfig().get("bspawn") != null) bspawn = mbr.getConfig().getLocation("bspawn");
         if (mbr.getConfig().get("yspawn") != null) yspawn = mbr.getConfig().getLocation("yspawn");
         Bukkit.getScheduler().runTaskTimer(this, ontimer, 20, 0);
@@ -98,6 +107,6 @@ public final class Man10_Bank_Robber extends JavaPlugin {
             mysql.execute("create table if not exists player_log(id int auto_increment,time timestamp,gameid int,name varchar(16),uuid varchar(36),result varchar(4),kill int,death int,bet bigint,return bigint,primary key(id))");
             mysql.execute("create table if not exists player_data(id int auto_increment,time timestamp,name varchar(16),uuid varchar(36),kill int,death int,win int,lose int,profit bigint,primary key(id))");
             mysql.execute("create table if not exists match_log(id int auto_increment,time timestamp,start datetime,totalbet bigint,primary key(id))");
-        });
+        }).start();
     }
 }
