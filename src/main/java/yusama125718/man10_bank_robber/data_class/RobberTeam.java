@@ -1,6 +1,7 @@
 package yusama125718.man10_bank_robber.data_class;
 
 import com.shojabon.mcutils.Utils.BaseUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
@@ -9,11 +10,10 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import yusama125718.man10_bank_robber.Man10BankRobber;
+import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class RobberTeam {
 
@@ -26,8 +26,7 @@ public class RobberTeam {
     // game params
     public int initialMoney = 0;
     public int money = 0;
-    public int stolenMoney = 0; // このチームが盗んだお金
-    public boolean lost = false;
+    public boolean finished = false;
     // params
     public String alias;
     public String prefix;
@@ -77,6 +76,19 @@ public class RobberTeam {
         }
     }
 
+    public void cleanUpTeam(){
+        for(RobberPlayer player : game.getPlayersInTeam(teamName)){
+            player.returnCarryingMoney();
+            player.getPlayer().setBedSpawnLocation(Man10BankRobber.lobbyLocation, true);
+            player.getPlayer().setHealth(0);
+        }
+        finished = true;
+        Bukkit.broadcast(Component.text(alias + "は敗北しました"));
+
+        int inGameTeams = 0;
+    }
+
+    //バー
     public void updateTeamBar(){
         bar.setTitle(alias + "§f§l 現在:" + BaseUtils.priceString(money) + "円");
         double percentage = (double) money/initialMoney;
@@ -89,6 +101,22 @@ public class RobberTeam {
             player.getPlayer().teleport(spawnPoint);
         }
     }
+    //賞金計算
+    public void payBackAsWinner(){
+        List<RobberPlayer> players = game.getPlayersInTeam(teamName);
+        int winSplit = (money - calculateTotalBet())/players.size();
+        if(winSplit < 0) winSplit = 0;
+        for(RobberPlayer player : players){
+            player.giveMoney(player.betPrice + winSplit);
+        }
+    }
+
+    public void payBackAsLoser(){
+        List<RobberPlayer> players = game.getPlayersInTeam(teamName);
+        for(RobberPlayer player : players){
+            player.giveMoney((player.betPrice/initialMoney)*money);
+        }
+    }
 
     public int calculateTotalBet(){
         int result = 0;
@@ -96,6 +124,10 @@ public class RobberTeam {
             result += player.betPrice;
         }
         return result;
+    }
+
+    public int calculateDifferenceFromStart(){
+        return money - initialMoney;
     }
 
 

@@ -164,32 +164,27 @@ public class RobberGame {
     public RobberTeam getTeam(String teamName){
         return teams.get(teamName);
     }
-    public void makeTeamLose(String teamName){
-        RobberTeam lostTeam = getTeam(teamName);
-        if(lostTeam == null) return;
-        for(RobberPlayer player : getPlayersInTeam(teamName)){
-            player.returnCarryingMoney();
-            player.getPlayer().setBedSpawnLocation(Man10BankRobber.lobbyLocation, true);
-            player.getPlayer().setHealth(0);
-        }
-        lostTeam.lost = true;
-        Bukkit.broadcast(Component.text(lostTeam.alias + "は敗北しました"));
-
-        int inGameTeams = 0;
-        for(RobberTeam team : teams.values()){
-            if(!team.lost) inGameTeams += 1;
-        }
-        if(inGameTeams <= 1){
-            setGameState(RobberGameStateType.END);
-        }
-
-    }
 
     public RobberTeam getNexus(Location loc){
         for(RobberTeam team: teams.values()){
             if(team.nexusBlocks.contains(loc)) return team;
         }
         return null;
+    }
+
+    //ゲーム処理
+    public void makeTeamLose(String teamName){
+        RobberTeam lostTeam = getTeam(teamName);
+        if(lostTeam == null) return;
+        lostTeam.cleanUpTeam();
+        int inGameTeams = 0;
+        for(RobberTeam team : teams.values()){
+            if(!team.finished) inGameTeams += 1;
+        }
+        if(inGameTeams <= 1){
+            setGameState(RobberGameStateType.END);
+        }
+
     }
 
 

@@ -41,7 +41,6 @@ public class RobberPlayer {
         for(String teamName: carryingMoney.keySet()){
             int balance = carryingMoney.get(teamName);
             game.getTeam(team).money += balance;
-            game.getTeam(team).stolenMoney += balance;
             getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l" + BaseUtils.priceString(balance) + "円を届けた");
             carryingMoney.remove(teamName);
             RobberTeam enemyTeam = game.getTeam(teamName);

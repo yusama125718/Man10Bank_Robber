@@ -1,6 +1,7 @@
 package yusama125718.man10_bank_robber.data_class.states;
 
 import com.shojabon.mcutils.Utils.SScoreboard;
+import it.unimi.dsi.fastutil.floats.Float2DoubleArrayMap;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -8,7 +9,12 @@ import org.bukkit.plugin.Plugin;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
 import yusama125718.man10_bank_robber.data_class.RobberGameStateData;
+import yusama125718.man10_bank_robber.data_class.RobberTeam;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class EndState extends RobberGameStateData {
 
@@ -17,7 +23,24 @@ public class EndState extends RobberGameStateData {
 
     @Override
     public void start() {
-        //賞金処理
+        //優勝者処理
+        HashMap<String, Integer> difference = new HashMap<>();
+        for(RobberTeam team: game.teams.values()){
+            team.cleanUpTeam();
+            difference.put(team.teamName, team.calculateDifferenceFromStart());
+        }
+
+        ArrayList<Integer> differenceList = new ArrayList<>(difference.values());
+        int biggestTeam = Collections.max(differenceList);
+
+        for(RobberTeam team: game.teams.values()){
+            if(team.calculateDifferenceFromStart() == biggestTeam){
+                team.payBackAsWinner();
+            }else{
+                team.payBackAsLoser();
+            }
+        }
+
         timerTillNextState.start();
     }
 
