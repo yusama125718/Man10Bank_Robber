@@ -1,0 +1,28 @@
+categories:
+  rifle:
+    material: DIAMOND
+    name: "アサルトライフル"
+    lore:
+      - "1"
+      - "2"
+    customModelData: 10
+    limit: 1
+  heal:
+    material: DIAMOND
+    name: "回復"
+    lore:
+      - "1"
+      - "2"
+    customModelData: 10
+    limit: 3
+
+shops:
+  ak47:
+    name: "ak-47"
+    lore:
+      - "100円"
+      - "10発"
+    customModelData: 10
+    category: "rifle"
+    command: "give {player} diamond 1"
+    material: DIAMOND

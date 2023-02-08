@@ -10,6 +10,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -143,6 +144,19 @@ public class InGameState extends RobberGameStateData {
             player.carryingMoney.remove(team);
         }
         player.carryingMoney.clear();
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent e){
+        RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
+        if(player == null) return;
+        for(String teamName: player.carryingMoney.keySet()){
+            RobberTeam team = game.getTeam(teamName);
+            int balance = player.carryingMoney.get(teamName);
+            team.money += balance;
+            e.getPlayer().sendMessage(Man10BankRobber.prefix + "§c§l" + BaseUtils.priceString(balance) + "円が返金された");
+            player.carryingMoney.remove(teamName);
+        }
     }
 
 
