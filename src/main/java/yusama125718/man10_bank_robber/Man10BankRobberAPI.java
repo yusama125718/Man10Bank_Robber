@@ -16,6 +16,6 @@ public class Man10BankRobberAPI {
     public RobberGame getRobberGame(String configName){
         YamlConfiguration config = SConfigFile.getConfigFile(plugin.getDataFolder() + File.separator + "games" + File.separator + configName + ".yml");
         if(config == null) return null;
-        return new RobberGame(configName, config);
+        return new RobberGame(plugin, configName, config);
     }
 }

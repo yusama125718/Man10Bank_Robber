@@ -43,7 +43,7 @@ public class RobberTeamData {
             Man10BankRobber.logWarn(teamName + "のスポーンがセットされていません");
             return false;
         }
-        if(nexusBlocks.size() == 0){
+        if(nexusBlocks == null || nexusBlocks.size() == 0){
             Man10BankRobber.logWarn(teamName + "のネクサスブロックがセットされていません");
             return false;
         }

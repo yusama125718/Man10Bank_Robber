@@ -7,6 +7,9 @@ import com.shojabon.mcutils.Utils.SCommandRouter.SCommandRouter;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.CreateNewPresetCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.TestCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.set.team.AddTeamNexusLocationCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.set.team.SetTeamSpawnLocationCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.StartGameCommand;
 
 
 public class OpCommands extends SCommandRouter {
@@ -36,6 +39,32 @@ public class OpCommands extends SCommandRouter {
                         setExecutor(new CreateNewPresetCommand(plugin))
         );
 
+        addCommand(
+                new SCommandObject()
+                        .addArgument(new SCommandArgument().addAllowedString("config"))
+                        .addArgument(new SCommandArgument().addAllowedString("set"))
+                        .addArgument(new SCommandArgument().addAlias("ゲーム名"))
+                        .addArgument(new SCommandArgument().addAlias("team"))
+                        .addArgument(new SCommandArgument().addAlias("チーム内部名"))
+                        .addArgument(new SCommandArgument().addAllowedString("spawnPoint"))
+                        .addRequiredPermission("man10bankrobber.op.config.team.spawnPoint")
+                        .addExplanation("チームのスポーンをセットする").
+                        setExecutor(new SetTeamSpawnLocationCommand(plugin))
+        );
+
+        addCommand(
+                new SCommandObject()
+                        .addArgument(new SCommandArgument().addAllowedString("config"))
+                        .addArgument(new SCommandArgument().addAllowedString("add"))
+                        .addArgument(new SCommandArgument().addAlias("ゲーム名"))
+                        .addArgument(new SCommandArgument().addAlias("team"))
+                        .addArgument(new SCommandArgument().addAlias("チーム内部名"))
+                        .addArgument(new SCommandArgument().addAllowedString("nexusBlocks"))
+                        .addRequiredPermission("man10bankrobber.op.config.team.nexusBlocks")
+                        .addExplanation("チームのネクサスブロック位置を追加する").
+                        setExecutor(new AddTeamNexusLocationCommand(plugin))
+        );
+
         //ゲーム系コマンド
         addCommand(
                 new SCommandObject()
@@ -44,7 +73,7 @@ public class OpCommands extends SCommandRouter {
                         .addArgument(new SCommandArgument().addAlias("ゲーム名"))
                         .addRequiredPermission("man10bankrobber.op.game.start")
                         .addExplanation("ゲームを開始する").
-                        setExecutor(new CreateNewPresetCommand(plugin))
+                        setExecutor(new StartGameCommand(plugin))
         );
 
         addCommand(
