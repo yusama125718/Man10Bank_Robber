@@ -1,4 +1,4 @@
-package yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.set.team;
+package yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config;
 
 import com.shojabon.mcutils.Utils.SConfigFile;
 import org.bukkit.command.Command;
@@ -9,12 +9,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
-public class SetTeamSpawnLocationCommand implements CommandExecutor {
+public class SetReadyLocation implements CommandExecutor {
     Man10BankRobber plugin;
 
-    public SetTeamSpawnLocationCommand(Man10BankRobber plugin){
+    public SetReadyLocation(Man10BankRobber plugin){
         this.plugin = plugin;
     }
 
@@ -26,7 +27,7 @@ public class SetTeamSpawnLocationCommand implements CommandExecutor {
             Man10BankRobber.senderWarn(sender, "ゲームが存在しません");
             return false;
         }
-        config.set("teams." + args[4] + ".spawnPoint", ((Player) sender).getLocation());
+        config.set("locations.ready", ((Player) sender).getLocation());
         try {
             config.save(new File(filePath));
         } catch (IOException e) {

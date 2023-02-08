@@ -74,7 +74,7 @@ public class RobberGame {
             Man10BankRobber.logWarn("最大最小プレイヤー人数が不正です");
             return false;
         }
-        if(maximumBet < minimumBet || maximumBet <= 0 || minimumBet < 0){
+        if((maximumBet != 0 && maximumBet < minimumBet) || maximumBet < 0 || minimumBet < 0){
             Man10BankRobber.logWarn("最大最小ベット金額が不正です");
             return false;
         }
