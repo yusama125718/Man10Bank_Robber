@@ -5,6 +5,7 @@ mysql:
   pass: ""
   db: "mbr_data"
 
+prefix: "§e§l[MBR]§f§l"
 world: world
 system: true
 entrymode: true

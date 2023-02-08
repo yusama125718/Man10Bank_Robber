@@ -1,0 +1,29 @@
+locations:
+  ready: null
+teams:
+  blue:
+    alias: "青チーム"
+    nexusBlocks: null
+    spawnPoint: null
+    prefix: "§b§l[青チーム]§f"
+  yellow:
+    alias: "黄チーム"
+    nexusBlocks: null
+    spawnPoint: null
+    prefix: "§e§l[黄チーム]§f"
+time:
+  ENTRY: 600
+  READY: 60
+  IN_GAME: 300
+
+nexus:
+  mode: "FIXED"
+  value: 1000
+
+bet:
+  minimumBet: 10000
+  maximumBet: 0
+
+players:
+  minimumPlayersPerTeam: 3
+  maximumPlayersPerTeam: 5
