@@ -1,14 +1,17 @@
 package yusama125718.man10_bank_robber.data_class;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import yusama125718.man10_bank_robber.Man10BankRobber;
+import yusama125718.man10_bank_robber.data_class.states.EntryState;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 import yusama125718.man10_bank_robber.enums.NexusMode;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class RobberGame {
 
@@ -16,6 +19,7 @@ public class RobberGame {
     public FileConfiguration config;
     Man10BankRobber plugin;
     HashMap<String, RobberTeamData> teams = new HashMap<>();
+    public HashMap<UUID, RobberPlayer> preRegisteredPlayers = new HashMap<>();
 
     //ゲームステート
     RobberGameStateType gameStateType = RobberGameStateType.NO_GAME;
@@ -33,6 +37,11 @@ public class RobberGame {
     //ネクサス金額モード
     NexusMode nexusMode = NexusMode.FIXED;
     int nexusModeValue = 1000;
+
+    //時間
+    public int timeENTRY = 60;
+    public int timeREADY = 60;
+    public int timeIN_GAME = 300;
     public RobberGame(Man10BankRobber plugin, String gameName, FileConfiguration config){
         this.gameName = gameName;
         this.config = config;
@@ -55,8 +64,14 @@ public class RobberGame {
         nexusMode = NexusMode.valueOf(nexusModeString);
         nexusModeValue = this.config.getInt("nexus.value", nexusModeValue);
 
-        // load time
-        // load team
+        // 時間データをロードする
+
+        timeENTRY = this.config.getInt("time.ENTRY", 60);
+        timeREADY = this.config.getInt("time.READY", 60);
+        timeIN_GAME = this.config.getInt("time.IN_GAME", 300);
+
+
+        // チームデータをロードする
         ConfigurationSection teamsData = this.config.getConfigurationSection("teams");
         if(teamsData != null){
             for(String teamName: teamsData.getKeys(false)){
@@ -90,6 +105,13 @@ public class RobberGame {
             Man10BankRobber.logWarn("準備位置が不正です");
             return false;
         }
+
+        //時間チェック
+        if(timeENTRY < 0 || timeREADY < 0 || timeIN_GAME < 0){
+            Man10BankRobber.logWarn("時間の数値が不正です");
+            return false;
+        }
+
         return true;
     }
 
@@ -98,7 +120,7 @@ public class RobberGame {
 
         Bukkit.getScheduler().runTask(plugin, ()-> {
             //stop current state
-            if(gameStateType != null){
+            if(gameState != null){
                 gameState.beforeEnd();
             }
 
@@ -114,10 +136,12 @@ public class RobberGame {
 
     public RobberGameStateData getStateData(RobberGameStateType state){
         switch (state){
+            case ENTRY -> {
+                return new EntryState();
+            }
         }
         return null;
     }
-
 
 
 

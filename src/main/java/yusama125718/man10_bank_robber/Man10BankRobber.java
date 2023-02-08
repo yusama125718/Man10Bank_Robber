@@ -1,6 +1,8 @@
 package yusama125718.man10_bank_robber;
 
+import com.shojabon.mcutils.Utils.STimer;
 import com.shojabon.mcutils.Utils.VaultAPI;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -47,6 +49,8 @@ public final class Man10BankRobber extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        STimer.pluginEnabled = false;
+        api.endGame();
     }
 
     public static void logWarn(String message){
@@ -54,4 +58,8 @@ public final class Man10BankRobber extends JavaPlugin {
     }
 
     public static void senderWarn(CommandSender sender, String message){sender.sendMessage(prefix + "§c§l" + message);}
+    public static void broadcastMessage(String message){
+        Bukkit.broadcast(Component.text(Man10BankRobber.prefix + message));
+    }
+
 }

@@ -10,6 +10,7 @@ import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.TestComm
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.SetReadyLocation;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.AddTeamNexusLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.SetTeamSpawnLocationCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.CancelGameCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.StartGameCommand;
 
 
@@ -86,6 +87,14 @@ public class OpCommands extends SCommandRouter {
                         .addRequiredPermission("man10bankrobber.op.game.start")
                         .addExplanation("ゲームを開始する").
                         setExecutor(new StartGameCommand(plugin))
+        );
+        addCommand(
+                new SCommandObject()
+                        .addArgument(new SCommandArgument().addAllowedString("game"))
+                        .addArgument(new SCommandArgument().addAllowedString("cancel"))
+                        .addRequiredPermission("man10bankrobber.op.game.cancel")
+                        .addExplanation("終了する")
+                        .setExecutor(new CancelGameCommand(plugin))
         );
 
         addCommand(

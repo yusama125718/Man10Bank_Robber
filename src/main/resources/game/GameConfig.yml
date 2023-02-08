@@ -12,7 +12,7 @@ teams:
     spawnPoint: null
     prefix: "§e§l[黄チーム]§f"
 time:
-  ENTRY: 600
+  ENTRY: 60
   READY: 60
   IN_GAME: 300
 
