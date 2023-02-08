@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -42,33 +41,34 @@ public final class Man10_Bank_Robber extends JavaPlugin {
     public static List<Location> ynexus = new ArrayList<>();
     public static List<Location> bnexus = new ArrayList<>();
     public static HashMap<String, Data.ShopData> shops = new HashMap<>();
-    public static HashMap<Player, Data.PlayerData> players = new HashMap<>();
-    public static HashMap<Player, Data.PlayerData> entryplayer = new HashMap<>();
-    public static HashMap<Player, Data.Team> editnexus = new HashMap<>();
+    public static HashMap<UUID, Data.PlayerData> players = new HashMap<>();
+    public static HashMap<UUID, Data.PlayerData> entryplayer = new HashMap<>();
+    public static HashMap<UUID, Data.Team> editnexus = new HashMap<>();
 
     Consumer<BukkitTask> ontimer = bukkitTask -> {
         if (pause || !system) return;
         timer--;
         if (gamestatus.equals(Data.Status.entry) && entrymode){
-            if (timer >= 0){
+            if (timer <= 0){
+                System.out.println(entryplayer);
                 Game.EndWaiting();
             } else {
-                BossBar.UpdateInfo("§e§l[MBR] §r§lエントリー受付中 Time："+timer, entrytime/timer);
+                BossBar.UpdateInfo("§e§l[MBR] §r§lエントリー受付中 Time："+timer, timer/entrytime);
             }
         }
         else if (gamestatus.equals(Data.Status.ready)){
-            if (timer >= 0){
+            if (timer <= 0){
                 Game.Fight();
             } else {
-                BossBar.UpdateInfo("§e§l[MBR] §r§l準備フェーズ Time："+timer, readytime/timer);
+                BossBar.UpdateInfo("§e§l[MBR] §r§l準備フェーズ Time："+timer, timer/readytime);
             }
         }
         else if (gamestatus.equals(Data.Status.fight)){
-            if (timer >= 0){
+            if (timer <= 0){
                 gamestatus = Data.Status.end;
                 Game.GameEnd();
             } else {
-                BossBar.UpdateInfo("§e§l[MBR] §r§l試合中！ Time："+timer, readytime/timer);
+                BossBar.UpdateInfo("§e§l[MBR] §r§l試合中！ Time："+timer, timer/readytime);
                 if (blueinit/bluenexus < 1) BossBar.UpdateBlue("§e§l[MBR] §r§9§lBlueチーム §r§l金庫の残高："+bluenexus*nexusdamage, 1.0);
                 else BossBar.UpdateBlue("§e§l[MBR] §r§9§lBlueチーム §r§l金庫の残高："+bluenexus*nexusdamage, blueinit/bluenexus);
                 if (yellowinit/yellownexus < 1) BossBar.UpdateYellow("§e§l[MBR] §r§e§lYellowチーム §r§l金庫の残高："+yellownexus*nexusdamage, 1.0);
@@ -101,7 +101,7 @@ public final class Man10_Bank_Robber extends JavaPlugin {
         world = Bukkit.getWorld(mbr.getConfig().getString("world"));
         if (mbr.getConfig().get("bspawn") != null) bspawn = mbr.getConfig().getLocation("bspawn");
         if (mbr.getConfig().get("yspawn") != null) yspawn = mbr.getConfig().getLocation("yspawn");
-        Bukkit.getScheduler().runTaskTimer(this, ontimer, 20, 0);
+        Bukkit.getScheduler().runTaskTimer(this, ontimer, 0, 20);
         new Thread(() -> {
             MySQLManager mysql = new MySQLManager(mbr, "mbr");
             mysql.execute("create table if not exists player_log(id int auto_increment,time timestamp,gameid int,name varchar(16),uuid varchar(36),result varchar(4),kill int,death int,bet bigint,return bigint,primary key(id))");

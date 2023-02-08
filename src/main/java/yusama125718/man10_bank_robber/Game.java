@@ -2,12 +2,8 @@ package yusama125718.man10_bank_robber;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static yusama125718.man10_bank_robber.Man10_Bank_Robber.*;
 
@@ -43,36 +39,50 @@ public class Game {
         for (int i = 0; i < entryplayer.size(); i++) number.add(i);
         if (entryplayer.size() > maxplayer){
             for (int i = 0; i < maxplayer; i++){
-                Random random = new Random();
-                int n = random.nextInt(number.size() - 1);
-                if (team) lottery.put(number.get(n), Data.Team.blue);
-                else lottery.put(number.get(n), Data.Team.yellow);
-                number.remove(n);
+                if (number.size() == 1){
+                    if (team) lottery.put(number.get(0), Data.Team.blue);
+                    else lottery.put(number.get(0), Data.Team.yellow);
+                    number.remove(0);
+                } else {
+                    Random random = new Random();
+                    int n = random.nextInt(number.size() - 1);
+                    if (team) lottery.put(number.get(n), Data.Team.blue);
+                    else lottery.put(number.get(n), Data.Team.yellow);
+                    number.remove(n);
+                }
                 team = !team;
             }
         } else {
-            while (number.size() != 0){
-                Random random = new Random();
-                int n = random.nextInt(number.size() - 1);
-                if (team) lottery.put(number.get(n), Data.Team.blue);
-                else lottery.put(number.get(n), Data.Team.yellow);
-                number.remove(n);
+            while (number.size() > 0){
+                if (number.size() == 1){
+                    if (team) lottery.put(number.get(0), Data.Team.blue);
+                    else lottery.put(number.get(0), Data.Team.yellow);
+                    number.remove(0);
+                } else {
+                    Random random = new Random();
+                    int n = random.nextInt(number.size() - 1);
+                    if (team) lottery.put(number.get(n), Data.Team.blue);
+                    else lottery.put(number.get(n), Data.Team.yellow);
+                    number.remove(n);
+                }
                 team = !team;
             }
         }
         int i = 0;
-        for (Player p :entryplayer.keySet()){
+        for (UUID p : entryplayer.keySet()){
+            if (Bukkit.getPlayer(p) == null) continue;
             if (lottery.containsKey(i)){
                 entryplayer.get(p).team = lottery.get(i);
                 players.put(p, entryplayer.get(p));
-                if (dissableplayers.contains(p.getUniqueId())) {
-                    dissableplayers.remove(p.getUniqueId());
-                    BossBar.ShowBar(p);
-                    p.sendMessage("§e§l[MBR] §r表示します");
+                if (dissableplayers.contains(p)) {
+                    dissableplayers.remove(p);
+                    BossBar.ShowBar(Bukkit.getPlayer(p));
+                    Bukkit.getPlayer(p).sendMessage("§e§l[MBR] §r表示します");
                 }
             } else {
-                vaultapi.deposit(p.getUniqueId(), entryplayer.get(p).bet + cost);
-                p.sendMessage("§e§l[MBR] §rあなたはプレイヤーに選ばれなかったのでベットしたお金を返金しました");
+                if (Bukkit.getPlayer(p) == null) continue;
+                vaultapi.deposit(p, entryplayer.get(p).bet + cost);
+                Bukkit.getPlayer(p).sendMessage("§e§l[MBR] §rあなたはプレイヤーに選ばれなかったのでベットしたお金を返金しました");
             }
             entryplayer.remove(p);
             i++;
@@ -87,35 +97,39 @@ public class Game {
         freeze = true;
         Function.Broadcast("§e§l[MBR] §r§lプレイヤーが決定しました");
         Function.Broadcast("§e§l[MBR] §r§9§l青チーム");
-        for (Player p :players.keySet()){
+        for (UUID p :players.keySet()){
+            if (Bukkit.getPlayer(p) == null) continue;
             if (!players.get(p).team.equals(Data.Team.blue)) continue;
-            p.closeInventory();
-            players.get(p).saveinv = p.getInventory();
-            p.getInventory().clear();
-            p.teleport(bspawn);
-            Function.Broadcast("§9§l" + p.getName());
+            Bukkit.getPlayer(p).closeInventory();
+            players.get(p).saveinv = Bukkit.getPlayer(p).getInventory();
+            Bukkit.getPlayer(p).getInventory().clear();
+            Bukkit.getPlayer(p).teleport(bspawn);
+            Function.Broadcast("§9§l" + Bukkit.getPlayer(p).getName());
         }
         Function.Broadcast("§e§l[MBR] §r§e§l来チーム");
-        for (Player p :players.keySet()){
+        for (UUID p :players.keySet()){
+            if (Bukkit.getPlayer(p) == null) continue;
             if (!players.get(p).team.equals(Data.Team.yellow)) continue;
-            p.closeInventory();
-            players.get(p).saveinv = p.getInventory();
-            p.getInventory().clear();
-            p.teleport(yspawn);
-            Function.Broadcast("§e§l" + p.getName());
+            Bukkit.getPlayer(p).closeInventory();
+            players.get(p).saveinv = Bukkit.getPlayer(p).getInventory();
+            Bukkit.getPlayer(p).getInventory().clear();
+            Bukkit.getPlayer(p).teleport(yspawn);
+            Function.Broadcast("§e§l" + Bukkit.getPlayer(p).getName());
         }
         Function.Broadcast("§e§l[MBR] §r§lプレイヤーは準備を始めてください");
         Function.Broadcast("§e§l[MBR] §r§l"+ readytime +"秒後に開始します");
         Bukkit.getScheduler().runTaskLater(mbr, () -> {
-            for (Player p :players.keySet()){
-                GUI.BuyMenu(p);
+            for (UUID p :players.keySet()){
+                if (Bukkit.getPlayer(p) == null) continue;
+                GUI.BuyMenu(Bukkit.getPlayer(p));
             }
         },20);
     }
 
     public static void Fight(){
         BossBar.ShowNexus();
-        for (Player p : players.keySet()){
+        for (UUID p : players.keySet()){
+            if (Bukkit.getPlayer(p) == null) continue;
             if (players.get(p).team.equals(Data.Team.blue)) bluenexus += players.get(p).bet;
             else yellownexus += players.get(p).bet;
         }
@@ -124,16 +138,17 @@ public class Game {
         freeze = false;
         timer = gametime;
         gamestatus = Data.Status.fight;
-        for (Player p : players.keySet()){
-            p.closeInventory();
-            players.get(p).inv = p.getInventory();
+        for (UUID p : players.keySet()){
+            if (Bukkit.getPlayer(p) == null) continue;
+            Bukkit.getPlayer(p).closeInventory();
+            players.get(p).inv = Bukkit.getPlayer(p).getInventory();
         }
     }
 
     public static void GameEnd(){
         switch (gamestatus){
             case entry:
-                for (Player p: entryplayer.keySet()) vaultapi.deposit(p.getUniqueId(),entryplayer.get(p).bet + cost);
+                for (UUID p: entryplayer.keySet()) vaultapi.deposit(p,entryplayer.get(p).bet + cost);
                 entryplayer.clear();
                 Function.Broadcast("§e§l[MBR] §rゲームが強制終了しました。");
                 Function.Broadcast("§e§l[MBR] §rベットしたお金は返金されます");
@@ -141,46 +156,47 @@ public class Game {
 
             case ready:
             case fight:
-                for (Player p: entryplayer.keySet()) vaultapi.deposit(p.getUniqueId(),entryplayer.get(p).bet + cost);
-                for (Player p :players.keySet()){
-                    p.getInventory().clear();
-                    p.getInventory().setContents(players.get(p).saveinv.getContents());
-                    p.getInventory().setArmorContents(players.get(p).saveinv.getArmorContents());
-                    p.updateInventory();
+                for (UUID p: entryplayer.keySet()) vaultapi.deposit(p,entryplayer.get(p).bet + cost);
+                for (UUID p :players.keySet()){
+                    if (Bukkit.getPlayer(p) == null) continue;
+                    Bukkit.getPlayer(p).getInventory().clear();
+                    Bukkit.getPlayer(p).getInventory().setContents(players.get(p).saveinv.getContents());
+                    Bukkit.getPlayer(p).getInventory().setArmorContents(players.get(p).saveinv.getArmorContents());
+                    Bukkit.getPlayer(p).updateInventory();
                 }
                 Function.Broadcast("§e§l[MBR] §rゲームが強制終了しました。");
                 Function.Broadcast("§e§l[MBR] §rベットしたお金は返金されます");
                 break;
 
             case end:
-                for (Player p :players.keySet()){
+                for (UUID p :players.keySet()){
                     if (players.get(p).goldheld > 0){
                         if (players.get(p).team.equals(Data.Team.yellow)) bluenexus += players.get(p).goldheld * nexusdamage;
                         else yellownexus += players.get(p).goldheld * nexusdamage;
                     }
-                    p.getInventory().clear();
-                    p.getInventory().setContents(players.get(p).saveinv.getContents());
-                    p.getInventory().setArmorContents(players.get(p).saveinv.getArmorContents());
-                    p.updateInventory();
+                    Bukkit.getPlayer(p).getInventory().clear();
+                    Bukkit.getPlayer(p).getInventory().setContents(players.get(p).saveinv.getContents());
+                    Bukkit.getPlayer(p).getInventory().setArmorContents(players.get(p).saveinv.getArmorContents());
+                    Bukkit.getPlayer(p).updateInventory();
                 }
                 Function.Broadcast("§e§l[MBR] §r青チームの獲得金額：" + (yellowinit - yellownexus));
                 Function.Broadcast("§e§l[MBR] §r黄チームの獲得金額：" + (blueinit - bluenexus));
                 if ((bluenexus - blueinit) > (yellownexus - yellowinit)){
-                    for (Player p : players.keySet()) {
+                    for (UUID p : players.keySet()) {
                         if (players.get(p).team.equals(Data.Team.blue)){
-                            vaultapi.deposit(p.getUniqueId(), (bluenexus - blueinit) / 5 + players.get(p).bet);
+                            vaultapi.deposit(Bukkit.getPlayer(p).getUniqueId(), (bluenexus - blueinit) / 5 + players.get(p).bet);
                         } else {
-                            vaultapi.deposit(p.getUniqueId(), yellownexus / 5);
+                            vaultapi.deposit(Bukkit.getPlayer(p).getUniqueId(), yellownexus / 5);
                         }
                     }
                     Function.Broadcast("§e§l[MBR] §r青チームの勝利！");
                     Function.Broadcast("§e§l[MBR] §r勝者にお金が分配されます");
                 } else if ((blueinit - bluenexus) < (yellowinit - yellownexus)){
-                    for (Player p : players.keySet()) {
+                    for (UUID p : players.keySet()) {
                         if (players.get(p).team.equals(Data.Team.yellow)){
-                            vaultapi.deposit(p.getUniqueId(), (yellownexus - yellowinit) / 5 + players.get(p).bet);
+                            vaultapi.deposit(Bukkit.getPlayer(p).getUniqueId(), (yellownexus - yellowinit) / 5 + players.get(p).bet);
                         } else {
-                            vaultapi.deposit(p.getUniqueId(), bluenexus / 5);
+                            vaultapi.deposit(Bukkit.getPlayer(p).getUniqueId(), bluenexus / 5);
                         }
                     }
                     Function.Broadcast("§e§l[MBR] §r黄チームの勝利！");
@@ -188,7 +204,7 @@ public class Game {
                 } else {
                     Function.Broadcast("§e§l[MBR] §r引き分け！");
                     Function.Broadcast("§e§l[MBR] §rベットしたお金は返金されます");
-                    for (Player p: entryplayer.keySet()) vaultapi.deposit(p.getUniqueId(),entryplayer.get(p).bet + cost);
+                    for (UUID p: entryplayer.keySet()) vaultapi.deposit(p,entryplayer.get(p).bet + cost);
                 }
                 break;
         }

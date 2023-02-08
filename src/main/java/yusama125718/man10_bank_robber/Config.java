@@ -45,18 +45,16 @@ public class Config {
                 if (file.getName().equals("buymenu.yml")) {
                     YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
                     if (yml.get("size") == null || yml.getConfigurationSection("items") == null){
-                        return new Data.BuyMenuData(Bukkit.createInventory(null,9, Component.text("[MBR] BuyMenu")), new HashMap<>(), new ArrayList<>());
+                        return new Data.BuyMenuData(Bukkit.createInventory(null,9, Component.text("[MBR] BuyMenu")), new HashMap<>());
                     }
                     Inventory inv = Bukkit.createInventory(null,yml.getInt("size"), Component.text("[MBR] BuyMenu"));
                     HashMap<ItemStack,String> additems = new HashMap<>();
-                    List<Integer> money = new ArrayList<>();
                     ConfigurationSection items = yml.getConfigurationSection("items");
                     for (String s : items.getValues(false).keySet()){
-                        if (items.getConfigurationSection(s).getString("post").equals("money")) money.add(Integer.parseInt(s));
-                        else additems.put(items.getConfigurationSection(s).getItemStack("item"),items.getConfigurationSection(s).getString("post"));
+                        additems.put(items.getConfigurationSection(s).getItemStack("item"),items.getConfigurationSection(s).getString("post"));
                         inv.setItem(Integer.parseInt(s), items.getConfigurationSection(s).getItemStack("item"));
                     }
-                    return new Data.BuyMenuData(inv, additems, money);
+                    return new Data.BuyMenuData(inv, additems);
                 }
             }
             return CreateBuyMenu();
@@ -80,7 +78,7 @@ public class Config {
                 Bukkit.broadcast(Component.text("§e§l[MBR] §rbuymenu.ymlの保存に失敗しました"),"mserial.op");
             }
         }).start();
-        return new Data.BuyMenuData(Bukkit.createInventory(null,9, Component.text("[MBR] BuyMenu")), new HashMap<>(), new ArrayList<>());
+        return new Data.BuyMenuData(Bukkit.createInventory(null,9, Component.text("[MBR] BuyMenu")), new HashMap<>());
     }
 
     public static void SaveBuyMenu(Data.BuyMenuData data){
@@ -91,8 +89,7 @@ public class Config {
             for (int i = 0;i < data.inv.getSize();i++){
                 if (data.inv.getItem(i) == null) continue;
                 yml.set("items."+i+".item",data.inv.getItem(i));
-                if (data.moneyslot.contains(i)) yml.set("items."+i+".post","money");
-                else yml.set("items."+i+".post",data.items.get(data.inv.getItem(i)));
+                yml.set("items."+i+".post",data.items.get(data.inv.getItem(i)));
             }
             try {
                 yml.save(folder);
@@ -120,7 +117,7 @@ public class Config {
                     itemlist.put(items.getConfigurationSection(s).getItemStack("icon"),items.getConfigurationSection(s).getItemStack("item"));
                     valuelist.put(items.getConfigurationSection(s).getItemStack("icon"),items.getConfigurationSection(s).getDouble("price"));
                 }
-                shops.put(yml.getString("name"),new Data.ShopData(inv,itemlist,valuelist,items.getItemStack("icon")));
+                shops.put(yml.getString("name"),new Data.ShopData(inv,itemlist,valuelist,yml.getItemStack("icon")));
             }
         }
     }
@@ -130,11 +127,13 @@ public class Config {
             File folder = new File(shopfile.getAbsolutePath() + File.separator + name +".yml");
             YamlConfiguration yml = new YamlConfiguration();
             yml.set("size", data.inv.getSize());
+            yml.set("name", name);
+            yml.set("icon", data.icon);
             for (int i = 0;i < data.inv.getSize();i++){
                 if (data.inv.getItem(i) == null) continue;
-                yml.set("icon",data.inv.getItem(i));
-                yml.set("item",data.items.get(data.inv.getItem(i)));
-                yml.set("price",data.values.get(data.inv.getItem(i)));
+                yml.set("items."+i+".icon",data.inv.getItem(i));
+                yml.set("items."+i+".item",data.items.get(data.inv.getItem(i)));
+                yml.set("items."+i+".price",data.values.get(data.inv.getItem(i)));
             }
             try {
                 yml.save(folder);

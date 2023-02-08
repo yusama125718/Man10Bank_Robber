@@ -53,11 +53,9 @@ public class Data {
     public static class BuyMenuData{
         public Inventory inv;   //メニューの中身
         public HashMap<ItemStack,String> items = new HashMap<>();       //アイテム <アイテム,呼び出すメニュー名>
-        public List<Integer> moneyslot = new ArrayList<>();             //お金表示用スロット
-        public BuyMenuData(Inventory Inv, HashMap<ItemStack,String> Map, List<Integer> money){
+        public BuyMenuData(Inventory Inv, HashMap<ItemStack,String> Map){
             inv = Inv;
             items = Map;
-            moneyslot = money;
         }
     }
 

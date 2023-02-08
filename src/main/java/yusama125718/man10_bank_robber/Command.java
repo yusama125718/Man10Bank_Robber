@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 import static yusama125718.man10_bank_robber.Man10_Bank_Robber.*;
 
@@ -141,9 +142,9 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §rエントリー中ではありません");
                             return true;
                         }
-                        for (Player p: entryplayer.keySet()){
+                        for (UUID p: entryplayer.keySet()){
                             if (entryplayer.get(p).bet == null){
-                                Bukkit.broadcast(Component.text("§e§l[MBR] §r" + p.getName() + "がベットしなかったのでエントリーをキャンセルしました"));
+                                Bukkit.broadcast(Component.text("§e§l[MBR] §r" + Bukkit.getPlayer(p).getName() + "がベットしなかったのでエントリーをキャンセルしました"));
                                 entryplayer.remove(p);
                             }
                         }
@@ -201,8 +202,8 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §r/mbrでメニューを表示");
                             return true;
                         }
-                        if (editnexus.isEmpty() || !editnexus.containsKey((Player) sender)) return true;
-                        editnexus.remove((Player) sender);
+                        if (editnexus.isEmpty() || !editnexus.containsKey(((Player) sender).getUniqueId())) return true;
+                        editnexus.remove(((Player) sender).getUniqueId());
                         mbr.getConfig().set("bnexus", bnexus);
                         mbr.getConfig().set("ynexus", ynexus);
                         mbr.saveConfig();
@@ -229,7 +230,7 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §r今はエントリーできません");
                             return true;
                         }
-                        if (entryplayer.containsKey((Player) sender)){
+                        if (entryplayer.containsKey(((Player) sender).getUniqueId())){
                             sender.sendMessage("§e§l[MBR] §rすでにエントリーしています");
                             return true;
                         }
@@ -244,7 +245,7 @@ public class Command implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         vaultapi.withdraw(((Player) sender).getUniqueId(), money + cost);
-                        entryplayer.put((Player) sender, new Data.PlayerData(money));
+                        entryplayer.put(((Player) sender).getUniqueId(), new Data.PlayerData(money));
                         sender.sendMessage("§e§l[MBR] §rエントリーしました");
                         return true;
 
@@ -282,7 +283,7 @@ public class Command implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         if (args[1].equals("setnexus")){
-                            editnexus.put((Player) sender, Data.Team.blue);
+                            editnexus.put(((Player) sender).getUniqueId(), Data.Team.blue);
                             sender.sendMessage("§e§l[MBR] §rネクサスを設置してください");
                             sender.sendMessage("§e§l[MBR] §r設置したら/mbr endを実行してください");
                             return true;
@@ -302,11 +303,11 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §rそのプレイヤーは存在しません");
                             return true;
                         }
-                        if (entryplayer.containsKey(baddplayer)){
+                        if (entryplayer.containsKey(baddplayer.getUniqueId())){
                             sender.sendMessage("§e§l[MBR] §rそのプレイヤーはエントリーしています");
                             return true;
                         }
-                        entryplayer.put(baddplayer, new Data.PlayerData(Data.Team.blue));
+                        entryplayer.put(baddplayer.getUniqueId(), new Data.PlayerData(Data.Team.blue));
                         GUI.BetMenu(baddplayer);
                         sender.sendMessage("§e§l[MBR] §r"+args[1]+"にベットメニューを開きました");
                         return true;
@@ -317,7 +318,7 @@ public class Command implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         if (args[1].equals("setnexus")){
-                            editnexus.put((Player) sender, Data.Team.yellow);
+                            editnexus.put(((Player) sender).getUniqueId(), Data.Team.yellow);
                             sender.sendMessage("§e§l[MBR] §rネクサスを設置してください");
                             sender.sendMessage("§e§l[MBR] §r設置したら/mbr endを実行してください");
                             return true;
@@ -337,11 +338,11 @@ public class Command implements CommandExecutor, TabCompleter {
                             sender.sendMessage("§e§l[MBR] §rそのプレイヤーは存在しません");
                             return true;
                         }
-                        if (entryplayer.containsKey(yaddplayer)){
+                        if (entryplayer.containsKey(yaddplayer.getUniqueId())){
                             sender.sendMessage("§e§l[MBR] §rそのプレイヤーはエントリーしています");
                             return true;
                         }
-                        entryplayer.put(yaddplayer, new Data.PlayerData(Data.Team.yellow));
+                        entryplayer.put(yaddplayer.getUniqueId(), new Data.PlayerData(Data.Team.yellow));
                         GUI.BetMenu(yaddplayer);
                         sender.sendMessage("§e§l[MBR] §r"+args[1]+"にベットメニューを開きました");
                         return true;
@@ -494,7 +495,12 @@ public class Command implements CommandExecutor, TabCompleter {
                         sender.sendMessage("§e§l[MBR] §rその名前のshopはすでに存在しています");
                         return true;
                     }
+                    if (args[2].equals("money") || args[2].equals("none")){
+                        sender.sendMessage("§e§l[MBR] §rその名前のshopは作れません");
+                        return true;
+                    }
                     GUI.EditShopMenu((Player) sender, size, args[2]);
+                    return true;
                 }
         }
         sender.sendMessage("§e§l[MBR] §r/mbr help でhelpを表示");
