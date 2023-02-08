@@ -54,5 +54,11 @@ public class RobberTeam {
         return true;
     }
 
+    public void teleportAllPlayersToSpawn(){
+        for(RobberPlayer player: players.values()){
+            player.getPlayer().teleport(spawnPoint);
+        }
+    }
+
 
 }

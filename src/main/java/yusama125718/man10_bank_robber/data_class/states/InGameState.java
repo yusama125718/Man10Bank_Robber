@@ -24,6 +24,10 @@ public class InGameState extends RobberGameStateData {
 
     @Override
     public void start() {
+        //プレイヤーをスポーン位置にテレポート
+        for(RobberTeam team: game.getAllTeams()){
+            team.teleportAllPlayersToSpawn();
+        }
         timerTillNextState.start();
     }
 

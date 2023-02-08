@@ -4,6 +4,8 @@ import com.shojabon.mcutils.Utils.SScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
 import yusama125718.man10_bank_robber.data_class.RobberGameStateData;
@@ -53,5 +55,10 @@ public class EntryState extends RobberGameStateData {
             scoreboard.setText(2, "§a§l現在登録者§e§l" + game.preRegisteredPlayers.size() + "§a§l人");
             scoreboard.renderText();
         });
+    }
+
+    @EventHandler
+    public void onLeave(PlayerQuitEvent e){
+        game.unRegisterPlayer(e.getPlayer().getUniqueId());
     }
 }

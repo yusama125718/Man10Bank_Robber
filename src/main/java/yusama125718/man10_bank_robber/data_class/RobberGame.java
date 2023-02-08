@@ -13,7 +13,9 @@ import yusama125718.man10_bank_robber.data_class.states.ReadyState;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 import yusama125718.man10_bank_robber.enums.NexusMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class RobberGame {
@@ -109,7 +111,21 @@ public class RobberGame {
     }
 
     public void teleportPlayersToReadyArea(){
+        for(RobberPlayer player: getAllPlayers()){
+            player.getPlayer().teleport(readyLocation);
+        }
+    }
 
+    public List<RobberPlayer> getAllPlayers(){
+        List<RobberPlayer> result = new ArrayList<>();
+        for(RobberTeam team: teams.values()){
+            result.addAll(team.players.values());
+        }
+        return result;
+    }
+
+    public List<RobberTeam> getAllTeams(){
+        return new ArrayList<>(teams.values());
     }
 
 

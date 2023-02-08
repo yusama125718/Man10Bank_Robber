@@ -49,6 +49,8 @@ public class ReadyState extends RobberGameStateData {
             game.unRegisterPlayer(uuid);
         }
         game.preRegisteredPlayers.clear();
+
+        game.teleportPlayersToReadyArea();
         Man10BankRobber.broadcastMessage("§a§l準備フェーズ開始\n出場者は準備を開始してください");
         timerTillNextState.start();
     }
