@@ -5,24 +5,28 @@ import org.bukkit.configuration.ConfigurationSection;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
-public class RobberTeamData {
+public class RobberTeam {
 
     public ConfigurationSection config;
     private RobberGame game;
-    String teamName;
+
+    public HashMap<UUID, RobberPlayer> players = new HashMap<>();
+    public String teamName;
 
     // params
-    String alias;
-    String prefix;
+    public String alias;
+    public String prefix;
 
     //ロケーション
     Location spawnPoint;
 
     // nexus
     List<Location> nexusBlocks = new ArrayList<>();
-    public RobberTeamData(RobberGame game, String teamName, ConfigurationSection config){
+    public RobberTeam(RobberGame game, String teamName, ConfigurationSection config){
         this.config = config;
         this.teamName = teamName;
         this.game = game;

@@ -17,13 +17,13 @@ public class CancelGameCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        RobberGame raid = Man10BankRobber.currentGame;
-        if(raid == null){
+        RobberGame game = Man10BankRobber.currentGame;
+        if(game == null){
             sender.sendMessage(Man10BankRobber.prefix + "§c§l現在ゲームが行われていません");
             return true;
         }
         Man10BankRobber.api.endGame();
-        sender.sendMessage(Man10BankRobber.prefix + "§a§l試合をキャンセルしました");
+        sender.sendMessage(Man10BankRobber.prefix + "§a§lゲームをキャンセルしました");
         return true;
     }
 

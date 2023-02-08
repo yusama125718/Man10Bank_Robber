@@ -1,12 +1,13 @@
 package yusama125718.man10_bank_robber.data_class;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.data_class.states.EntryState;
+import yusama125718.man10_bank_robber.data_class.states.ReadyState;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 import yusama125718.man10_bank_robber.enums.NexusMode;
 
@@ -18,22 +19,22 @@ public class RobberGame {
     String gameName;
     public FileConfiguration config;
     Man10BankRobber plugin;
-    HashMap<String, RobberTeamData> teams = new HashMap<>();
+    public HashMap<String, RobberTeam> teams = new HashMap<>();
     public HashMap<UUID, RobberPlayer> preRegisteredPlayers = new HashMap<>();
 
     //ゲームステート
-    RobberGameStateType gameStateType = RobberGameStateType.NO_GAME;
-    RobberGameStateData gameState;
+    public RobberGameStateType gameStateType = RobberGameStateType.NO_GAME;
+    public RobberGameStateData gameState;
 
     // === コンフィグ ====
     //ロケーション
     Location readyLocation;
     //ベット金額
-    int minimumBet = 10000;
-    int maximumBet = 0;
+    public int minimumBet = 10000;
+    public int maximumBet = 0;
     //プレイヤー人数
-    int minimumPlayersPerTeam = 3;
-    int maximumPlayersPerTeam = 5;
+    public int minimumPlayersPerTeam = 3;
+    public int maximumPlayersPerTeam = 5;
     //ネクサス金額モード
     NexusMode nexusMode = NexusMode.FIXED;
     int nexusModeValue = 1000;
@@ -75,9 +76,38 @@ public class RobberGame {
         ConfigurationSection teamsData = this.config.getConfigurationSection("teams");
         if(teamsData != null){
             for(String teamName: teamsData.getKeys(false)){
-                teams.put(teamName, new RobberTeamData(this, teamName, teamsData.getConfigurationSection(teamName)));
+                teams.put(teamName, new RobberTeam(this, teamName, teamsData.getConfigurationSection(teamName)));
             }
         }
+    }
+
+    public RobberTeam getTeam(String teamName){
+        return teams.get(teamName);
+    }
+
+    public boolean registerPlayer(Player p, int betPrice){
+        RobberPlayer player = new RobberPlayer(p);
+        player.betPrice = betPrice;
+
+        if(!player.takeMoney(player.betPrice)){
+            return false;
+        }
+
+        if(preRegisteredPlayers.containsKey(p.getUniqueId())) return false;
+        preRegisteredPlayers.put(p.getUniqueId(), player);
+        return true;
+    }
+
+    public boolean unRegisterPlayer(UUID uuid){
+        if(!preRegisteredPlayers.containsKey(uuid)) return false;
+        RobberPlayer player = preRegisteredPlayers.get(uuid);
+        preRegisteredPlayers.remove(uuid);
+        player.giveMoney(player.betPrice);
+        return true;
+    }
+
+    public void teleportPlayersToReadyArea(){
+
     }
 
 
@@ -131,13 +161,15 @@ public class RobberGame {
             gameState = data;
             gameState.beforeStart();
         });
-        return;
     }
 
     public RobberGameStateData getStateData(RobberGameStateType state){
         switch (state){
             case ENTRY -> {
                 return new EntryState();
+            }
+            case READY -> {
+                return new ReadyState();
             }
         }
         return null;
