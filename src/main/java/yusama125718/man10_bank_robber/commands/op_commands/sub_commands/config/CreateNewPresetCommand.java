@@ -1,4 +1,4 @@
-package yusama125718.man10_bank_robber.commands.op_commands.sub_commands;
+package yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config;
 
 import com.shojabon.mcutils.Utils.SConfigFile;
 import org.bukkit.command.Command;

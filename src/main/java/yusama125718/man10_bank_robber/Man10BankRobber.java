@@ -2,7 +2,9 @@ package yusama125718.man10_bank_robber;
 
 import com.shojabon.mcutils.Utils.VaultAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import yusama125718.man10_bank_robber.commands.normal_commands.NormalCommands;
 import yusama125718.man10_bank_robber.commands.op_commands.OpCommands;
@@ -50,4 +52,6 @@ public final class Man10BankRobber extends JavaPlugin {
     public static void logWarn(String message){
         Bukkit.getLogger().info(prefix + "§c§l" + message);
     }
+
+    public static void senderWarn(CommandSender sender, String message){sender.sendMessage(prefix + "§c§l" + message);}
 }

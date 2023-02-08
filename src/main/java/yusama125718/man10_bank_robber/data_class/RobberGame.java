@@ -1,12 +1,11 @@
 package yusama125718.man10_bank_robber.data_class;
 
-import com.shojabon.mcutils.Utils.SConfigFile;
-import org.apache.commons.lang.enums.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import yusama125718.man10_bank_robber.Man10BankRobber;
+import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 import yusama125718.man10_bank_robber.enums.NexusMode;
 
 import java.util.HashMap;
@@ -15,9 +14,14 @@ public class RobberGame {
 
     String gameName;
     public FileConfiguration config;
+    Man10BankRobber plugin;
     HashMap<String, RobberTeamData> teams = new HashMap<>();
 
-    // === configuration ====
+    //ゲームステート
+    RobberGameStateType gameStateType = RobberGameStateType.NO_GAME;
+    RobberGameStateData gameState;
+
+    // === コンフィグ ====
     //ロケーション
     Location readyLocation;
     //ベット金額
@@ -29,9 +33,10 @@ public class RobberGame {
     //ネクサス金額モード
     NexusMode nexusMode = NexusMode.FIXED;
     int nexusModeValue = 1000;
-    public RobberGame(String gameName, FileConfiguration config){
+    public RobberGame(Man10BankRobber plugin, String gameName, FileConfiguration config){
         this.gameName = gameName;
         this.config = config;
+        this.plugin = plugin;
 
         loadConfig();
     }
@@ -85,8 +90,32 @@ public class RobberGame {
             Man10BankRobber.logWarn("準備位置が不正です");
             return false;
         }
-
         return true;
+    }
+
+    public void setGameState(RobberGameStateType state){
+        if(state == gameStateType) return;
+
+        Bukkit.getScheduler().runTask(plugin, ()-> {
+            //stop current state
+            if(gameStateType != null){
+                gameState.beforeEnd();
+            }
+
+            //start next state
+            gameStateType = state;
+            RobberGameStateData data = getStateData(gameStateType);
+            if(data == null) return;
+            gameState = data;
+            gameState.beforeStart();
+        });
+        return;
+    }
+
+    public RobberGameStateData getStateData(RobberGameStateType state){
+        switch (state){
+        }
+        return null;
     }
 
 
