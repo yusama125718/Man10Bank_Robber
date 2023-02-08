@@ -4,6 +4,12 @@ import com.shojabon.mcutils.Utils.SScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.Plugin;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
@@ -90,5 +96,44 @@ public class ReadyState extends RobberGameStateData {
             scoreboard.renderText();
         });
     }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent e){
+        if(!game.players.containsKey(e.getPlayer().getUniqueId())) return;
+        if(e.getPlayer().isOp()) return;
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent e){
+        if(!game.players.containsKey(e.getPlayer().getUniqueId())) return;
+        if(e.getPlayer().isOp()) return;
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onClick(InventoryClickEvent e){
+        if(!game.players.containsKey(e.getWhoClicked().getUniqueId())) return;
+        if(e.getWhoClicked().isOp()) return;
+        if(e.getClickedInventory() != e.getWhoClicked().getInventory()) return;
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onDropItem(PlayerDropItemEvent e){
+        if(!game.players.containsKey(e.getPlayer().getUniqueId())) return;
+        if(e.getPlayer().isOp()) return;
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPickupItem(PlayerAttemptPickupItemEvent e){
+        if(!game.players.containsKey(e.getPlayer().getUniqueId())) return;
+        if(e.getPlayer().isOp()) return;
+        e.setCancelled(true);
+    }
+
+
+
 
 }
