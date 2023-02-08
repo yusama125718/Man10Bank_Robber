@@ -8,6 +8,7 @@ import com.shojabon.mcutils.Utils.SCommandRouter.SCommandRouter;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.CreateNewPresetCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.TestCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.SetLobbyLocation;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.SetReadyLocation;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.AddTeamNexusLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.SetTeamSpawnLocationCommand;
@@ -78,6 +79,15 @@ public class OpCommands extends SCommandRouter {
                         .addRequiredPermission("man10bankrobber.op.config.readyLocation")
                         .addExplanation("準備中の位置を追加する").
                         setExecutor(new SetReadyLocation(plugin))
+        );
+        addCommand(
+                new SCommandObject()
+                        .addArgument(new SCommandArgument().addAllowedString("config"))
+                        .addArgument(new SCommandArgument().addAllowedString("set"))
+                        .addArgument(new SCommandArgument().addAllowedString("lobbyLocation"))
+                        .addRequiredPermission("man10bankrobber.op.config.lobbyLocation")
+                        .addExplanation("ロビーの位置を設定する").
+                        setExecutor(new SetLobbyLocation(plugin))
         );
 
         //ゲーム系コマンド

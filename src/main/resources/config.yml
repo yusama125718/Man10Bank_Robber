@@ -1,18 +1,20 @@
-mysql:
-  host: "localhost"
-  port: "3306"
-  user: "root"
-  pass: ""
-  db: "mbr_data"
-
+lobbyLocation: null
 prefix: "§e§l[MBR]§f§l"
-world: world
-system: true
-entrymode: true
-entrytime: 30
-minplayer: 6
-maxplayer: 10
-cost: 0
-readytime: 60
-gametime: 300
-nexusdamage: 1000
+
+
+#mysql:
+#  host: "localhost"
+#  port: "3306"
+#  user: "root"
+#  pass: ""
+#  db: "mbr_data"
+#world: world
+#system: true
+#entrymode: true
+#entrytime: 30
+#minplayer: 6
+#maxplayer: 10
+#cost: 0
+#readytime: 60
+#gametime: 300
+#nexusdamage: 1000

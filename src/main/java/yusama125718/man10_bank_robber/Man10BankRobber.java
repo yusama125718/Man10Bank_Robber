@@ -4,6 +4,7 @@ import com.shojabon.mcutils.Utils.STimer;
 import com.shojabon.mcutils.Utils.VaultAPI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -21,7 +22,7 @@ public final class Man10BankRobber extends JavaPlugin {
     public static ExecutorService threadPool = Executors.newCachedThreadPool();
     public static VaultAPI vault;
     public static Man10BankRobberAPI api;
-
+    public static Location lobbyLocation;
     public static RobberGame currentGame;
 
     @Override
@@ -32,6 +33,7 @@ public final class Man10BankRobber extends JavaPlugin {
         prefix = getConfig().getString("prefix");
 
         vault = new VaultAPI();
+        lobbyLocation = config.getLocation("lobbyLocation");
 
         api = new Man10BankRobberAPI(this);
 

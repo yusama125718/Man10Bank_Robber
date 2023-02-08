@@ -137,26 +137,15 @@ public class InGameState extends RobberGameStateData {
         e.setCancelled(true);
         RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
         if(!player.team.equals(nexusTeam.teamName)) return;
-        for(String team: player.carryingMoney.keySet()){
-            int balance = player.carryingMoney.get(team);
-            nexusTeam.money += balance;
-            e.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l" + BaseUtils.priceString(balance) + "円を届けた");
-            player.carryingMoney.remove(team);
-        }
-        player.carryingMoney.clear();
+        player.deliverCarryingMoney();
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e){
         RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
         if(player == null) return;
-        for(String teamName: player.carryingMoney.keySet()){
-            RobberTeam team = game.getTeam(teamName);
-            int balance = player.carryingMoney.get(teamName);
-            team.money += balance;
-            e.getPlayer().sendMessage(Man10BankRobber.prefix + "§c§l" + BaseUtils.priceString(balance) + "円が返金された");
-            player.carryingMoney.remove(teamName);
-        }
+        player.returnCarryingMoney();
+        player.getPlayer().setBedSpawnLocation(player.getTeam().spawnPoint, true);
     }
 
 

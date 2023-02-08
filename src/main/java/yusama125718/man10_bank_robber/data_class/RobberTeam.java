@@ -26,14 +26,15 @@ public class RobberTeam {
     // game params
     public int initialMoney = 0;
     public int money = 0;
-
+    public int stolenMoney = 0; // このチームが盗んだお金
+    public boolean lost = false;
     // params
     public String alias;
     public String prefix;
     public String barColor;
 
     //ロケーション
-    Location spawnPoint;
+    public Location spawnPoint;
 
     // nexus
     List<Location> nexusBlocks = new ArrayList<>();
@@ -44,23 +45,7 @@ public class RobberTeam {
 
         loadConfig();
     }
-
-    public void initializeTeam(){
-        initialMoney = calculateTotalBet();
-        money = initialMoney;
-        bar = Bukkit.createBossBar(alias, BarColor.valueOf(barColor), BarStyle.SOLID);
-        for(Player p: Bukkit.getOnlinePlayers()){
-            bar.addPlayer(p);
-        }
-    }
-
-    public void updateTeamBar(){
-        bar.setTitle(alias + "§f§l 現在:" + BaseUtils.priceString(money) + "円");
-        double percentage = (double) money/initialMoney;
-        if(percentage > 1) percentage = 1;
-        bar.setProgress(percentage);
-    }
-
+    //コンフィグ
     private void loadConfig(){
         alias = this.config.getString("alias", teamName);
         prefix = this.config.getString("prefix", null);
@@ -80,6 +65,23 @@ public class RobberTeam {
             return false;
         }
         return true;
+    }
+
+    public void initializeTeam(){
+        initialMoney = calculateTotalBet();
+        money = initialMoney;
+        bar = Bukkit.createBossBar(alias, BarColor.valueOf(barColor), BarStyle.SOLID);
+        for(Player p: Bukkit.getOnlinePlayers()){
+            bar.addPlayer(p);
+            p.setBedSpawnLocation(spawnPoint, true);
+        }
+    }
+
+    public void updateTeamBar(){
+        bar.setTitle(alias + "§f§l 現在:" + BaseUtils.priceString(money) + "円");
+        double percentage = (double) money/initialMoney;
+        if(percentage > 1) percentage = 1;
+        bar.setProgress(percentage);
     }
 
     public void teleportAllPlayersToSpawn(){

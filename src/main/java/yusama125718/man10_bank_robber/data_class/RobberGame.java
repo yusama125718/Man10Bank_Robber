@@ -1,5 +1,6 @@
 package yusama125718.man10_bank_robber.data_class;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -117,6 +118,11 @@ public class RobberGame {
             return false;
         }
 
+        if(Man10BankRobber.lobbyLocation == null){
+            Man10BankRobber.logWarn("ロビーの位置が不正です");
+            return false;
+        }
+
         return true;
     }
 
@@ -157,6 +163,26 @@ public class RobberGame {
     //チーム
     public RobberTeam getTeam(String teamName){
         return teams.get(teamName);
+    }
+    public void makeTeamLose(String teamName){
+        RobberTeam lostTeam = getTeam(teamName);
+        if(lostTeam == null) return;
+        for(RobberPlayer player : getPlayersInTeam(teamName)){
+            player.returnCarryingMoney();
+            player.getPlayer().setBedSpawnLocation(Man10BankRobber.lobbyLocation, true);
+            player.getPlayer().setHealth(0);
+        }
+        lostTeam.lost = true;
+        Bukkit.broadcast(Component.text(lostTeam.alias + "は敗北しました"));
+
+        int inGameTeams = 0;
+        for(RobberTeam team : teams.values()){
+            if(!team.lost) inGameTeams += 1;
+        }
+        if(inGameTeams <= 1){
+            setGameState(RobberGameStateType.END);
+        }
+
     }
 
     public RobberTeam getNexus(Location loc){
