@@ -2,6 +2,7 @@ package yusama125718.man10_bank_robber.commands.op_commands;
 
 
 import com.shojabon.mcutils.Utils.SCommandRouter.SCommandArgument;
+import com.shojabon.mcutils.Utils.SCommandRouter.SCommandArgumentType;
 import com.shojabon.mcutils.Utils.SCommandRouter.SCommandObject;
 import com.shojabon.mcutils.Utils.SCommandRouter.SCommandRouter;
 import yusama125718.man10_bank_robber.Man10BankRobber;
@@ -11,6 +12,7 @@ import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.S
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.AddTeamNexusLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.SetTeamSpawnLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.CancelGameCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.SetCurrentStateTimeCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.StartGameCommand;
 
 
@@ -95,6 +97,16 @@ public class OpCommands extends SCommandRouter {
                         .addRequiredPermission("man10bankrobber.op.game.cancel")
                         .addExplanation("終了する")
                         .setExecutor(new CancelGameCommand(plugin))
+        );
+
+        addCommand(
+                new SCommandObject()
+                        .addArgument(new SCommandArgument().addAllowedString("game"))
+                        .addArgument(new SCommandArgument().addAllowedString("setTime"))
+                        .addArgument(new SCommandArgument().addAllowedType(SCommandArgumentType.INT).addAlias("時間"))
+                        .addRequiredPermission("man10bankrobber.op.game.setTime")
+                        .addExplanation("現在のステートの時間を設定する")
+                        .setExecutor(new SetCurrentStateTimeCommand(plugin))
         );
 
         addCommand(

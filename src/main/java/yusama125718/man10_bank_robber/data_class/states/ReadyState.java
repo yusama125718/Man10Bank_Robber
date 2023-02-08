@@ -1,11 +1,9 @@
 package yusama125718.man10_bank_robber.data_class.states;
 
-import com.google.common.collect.Lists;
 import com.shojabon.mcutils.Utils.SScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
@@ -50,6 +48,7 @@ public class ReadyState extends RobberGameStateData {
         for(UUID uuid : game.preRegisteredPlayers.keySet()){
             game.unRegisterPlayer(uuid);
         }
+        game.preRegisteredPlayers.clear();
         Man10BankRobber.broadcastMessage("§a§l準備フェーズ開始\n出場者は準備を開始してください");
         timerTillNextState.start();
     }

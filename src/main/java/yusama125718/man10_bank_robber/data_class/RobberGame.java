@@ -6,7 +6,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import yusama125718.man10_bank_robber.Man10BankRobber;
+import yusama125718.man10_bank_robber.data_class.states.EndState;
 import yusama125718.man10_bank_robber.data_class.states.EntryState;
+import yusama125718.man10_bank_robber.data_class.states.InGameState;
 import yusama125718.man10_bank_robber.data_class.states.ReadyState;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 import yusama125718.man10_bank_robber.enums.NexusMode;
@@ -170,6 +172,12 @@ public class RobberGame {
             }
             case READY -> {
                 return new ReadyState();
+            }
+            case IN_GAME -> {
+                return new InGameState();
+            }
+            case END -> {
+                return new EndState();
             }
         }
         return null;
