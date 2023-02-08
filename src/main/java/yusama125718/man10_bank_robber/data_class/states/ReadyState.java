@@ -40,8 +40,9 @@ public class ReadyState extends RobberGameStateData {
             RobberPlayer assigningPlayer = game.preRegisteredPlayers.get(uuid);
             game.preRegisteredPlayers.remove(uuid);
             RobberTeam team = game.getTeam(assignedTeam);
+            assigningPlayer.team = team.teamName;
             assigningPlayer.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l当選しました、あなたが配属されてるのは『" + team.alias + "§a§l』です");
-            team.players.put(uuid, assigningPlayer);
+            game.players.put(uuid, assigningPlayer);
         }
 
         //当選しなかったプレイヤーに返金
@@ -50,7 +51,10 @@ public class ReadyState extends RobberGameStateData {
         }
         game.preRegisteredPlayers.clear();
 
-        game.teleportPlayersToReadyArea();
+        //準備エリアへ転送
+        for(RobberPlayer player: game.players.values()){
+            player.getPlayer().teleport(game.readyLocation);
+        }
         Man10BankRobber.broadcastMessage("§a§l準備フェーズ開始\n出場者は準備を開始してください");
         timerTillNextState.start();
     }

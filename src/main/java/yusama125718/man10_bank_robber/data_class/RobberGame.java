@@ -25,6 +25,7 @@ public class RobberGame {
     Man10BankRobber plugin;
     public HashMap<String, RobberTeam> teams = new HashMap<>();
     public HashMap<UUID, RobberPlayer> preRegisteredPlayers = new HashMap<>();
+    public HashMap<UUID, RobberPlayer> players = new HashMap<>();
 
     //ゲームステート
     public RobberGameStateType gameStateType = RobberGameStateType.NO_GAME;
@@ -32,7 +33,7 @@ public class RobberGame {
 
     // === コンフィグ ====
     //ロケーション
-    Location readyLocation;
+    public Location readyLocation;
     //ベット金額
     public int minimumBet = 10000;
     public int maximumBet = 0;
@@ -40,8 +41,8 @@ public class RobberGame {
     public int minimumPlayersPerTeam = 3;
     public int maximumPlayersPerTeam = 5;
     //ネクサス金額モード
-    NexusMode nexusMode = NexusMode.FIXED;
-    int nexusModeValue = 1000;
+    public NexusMode nexusMode = NexusMode.FIXED;
+    public int nexusModeValue = 1000;
 
     //時間
     public int timeENTRY = 60;
@@ -55,6 +56,7 @@ public class RobberGame {
         loadConfig();
     }
 
+    //コンフィグ管理
     private void loadConfig(){
         readyLocation = this.config.getLocation("locations.ready");
 
@@ -84,51 +86,6 @@ public class RobberGame {
             }
         }
     }
-
-    public RobberTeam getTeam(String teamName){
-        return teams.get(teamName);
-    }
-
-    public boolean registerPlayer(Player p, int betPrice){
-        RobberPlayer player = new RobberPlayer(p);
-        player.betPrice = betPrice;
-
-        if(!player.takeMoney(player.betPrice)){
-            return false;
-        }
-
-        if(preRegisteredPlayers.containsKey(p.getUniqueId())) return false;
-        preRegisteredPlayers.put(p.getUniqueId(), player);
-        return true;
-    }
-
-    public boolean unRegisterPlayer(UUID uuid){
-        if(!preRegisteredPlayers.containsKey(uuid)) return false;
-        RobberPlayer player = preRegisteredPlayers.get(uuid);
-        preRegisteredPlayers.remove(uuid);
-        player.giveMoney(player.betPrice);
-        return true;
-    }
-
-    public void teleportPlayersToReadyArea(){
-        for(RobberPlayer player: getAllPlayers()){
-            player.getPlayer().teleport(readyLocation);
-        }
-    }
-
-    public List<RobberPlayer> getAllPlayers(){
-        List<RobberPlayer> result = new ArrayList<>();
-        for(RobberTeam team: teams.values()){
-            result.addAll(team.players.values());
-        }
-        return result;
-    }
-
-    public List<RobberTeam> getAllTeams(){
-        return new ArrayList<>(teams.values());
-    }
-
-
     public boolean canPlayGame(){
         for(String team: teams.keySet()){
             if(!teams.get(team).canPlayGame()) return false;
@@ -163,6 +120,54 @@ public class RobberGame {
         return true;
     }
 
+
+    // 登録
+    public boolean registerPlayer(Player p, int betPrice){
+        RobberPlayer player = new RobberPlayer(p.getUniqueId());
+        player.betPrice = betPrice;
+
+        if(!player.takeMoney(player.betPrice)){
+            return false;
+        }
+
+        if(preRegisteredPlayers.containsKey(p.getUniqueId())) return false;
+        preRegisteredPlayers.put(p.getUniqueId(), player);
+        return true;
+    }
+
+    public boolean unRegisterPlayer(UUID uuid){
+        if(!preRegisteredPlayers.containsKey(uuid)) return false;
+        RobberPlayer player = preRegisteredPlayers.get(uuid);
+        preRegisteredPlayers.remove(uuid);
+        player.giveMoney(player.betPrice);
+        return true;
+    }
+
+    //プレイヤー
+    public RobberPlayer getPlayer(UUID uuid){
+        return players.get(uuid);
+    }
+    public List<RobberPlayer> getPlayersInTeam(String teamName){
+        List<RobberPlayer> result = new ArrayList<>();
+        for(RobberPlayer player: players.values()){
+            if(player.team.equals(teamName)) result.add(player);
+        }
+        return result;
+    }
+    //チーム
+    public RobberTeam getTeam(String teamName){
+        return teams.get(teamName);
+    }
+
+    public RobberTeam getNexus(Location loc){
+        for(RobberTeam team: teams.values()){
+            if(team.nexusBlocks.contains(loc)) return team;
+        }
+        return null;
+    }
+
+
+    //ステート管理
     public void setGameState(RobberGameStateType state){
         if(state == gameStateType) return;
 

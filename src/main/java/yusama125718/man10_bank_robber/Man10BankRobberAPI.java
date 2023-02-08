@@ -6,6 +6,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
+import yusama125718.man10_bank_robber.data_class.RobberPlayer;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 
 import java.io.File;
@@ -24,9 +25,14 @@ public class Man10BankRobberAPI {
 
     public void endGame(){
         Bukkit.getScheduler().runTask(plugin, ()-> {
-            if(Man10BankRobber.currentGame == null) return;
+            RobberGame game = Man10BankRobber.currentGame;
+            if(game == null) return;
 
-            Man10BankRobber.currentGame.setGameState(RobberGameStateType.NO_GAME);
+            for(RobberPlayer player: game.players.values()){
+                player.giveMoney(player.betPrice);
+            }
+
+            game.setGameState(RobberGameStateType.NO_GAME);
             Man10BankRobber.currentGame = null;
         });
     }

@@ -1,21 +1,28 @@
 package yusama125718.man10_bank_robber.data_class.states;
 
+import com.shojabon.mcutils.Utils.BaseUtils;
 import com.shojabon.mcutils.Utils.SScoreboard;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
 import yusama125718.man10_bank_robber.data_class.RobberGameStateData;
 import yusama125718.man10_bank_robber.data_class.RobberPlayer;
 import yusama125718.man10_bank_robber.data_class.RobberTeam;
+import yusama125718.man10_bank_robber.enums.NexusMode;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class InGameState extends RobberGameStateData {
 
@@ -25,7 +32,8 @@ public class InGameState extends RobberGameStateData {
     @Override
     public void start() {
         //プレイヤーをスポーン位置にテレポート
-        for(RobberTeam team: game.getAllTeams()){
+        for(RobberTeam team: game.teams.values()){
+            team.initializeTeam();
             team.teleportAllPlayersToSpawn();
         }
         timerTillNextState.start();
@@ -34,6 +42,10 @@ public class InGameState extends RobberGameStateData {
 
     @Override
     public void end() {
+        for(RobberTeam team: game.teams.values()){
+            team.bar.setVisible(false);
+            team.bar = null;
+        }
     }
 
     @Override
@@ -50,6 +62,11 @@ public class InGameState extends RobberGameStateData {
         this.bar = Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID);
         timerTillNextState.linkBossBar(bar, true);
         timerTillNextState.addOnIntervalEvent(e -> bar.setTitle(title.replace("{time}", String.valueOf(e))));
+        timerTillNextState.addOnIntervalEvent(e -> {
+            for(RobberTeam team : game.teams.values()){
+                team.updateTeamBar();
+            }
+        });
     }
 
     @Override
@@ -62,5 +79,72 @@ public class InGameState extends RobberGameStateData {
             scoreboard.renderText();
         });
     }
+
+    //ボスバー処理
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e){
+        for(RobberTeam team: game.teams.values()){
+            team.bar.addPlayer(e.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onJoin(PlayerQuitEvent e){
+        for(RobberTeam team: game.teams.values()){
+            team.bar.removePlayer(e.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onNexusBreak(BlockBreakEvent e){
+        RobberTeam nexusTeam = game.getNexus(e.getBlock().getLocation());
+        if(nexusTeam == null) return;
+        e.setCancelled(true);
+        RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
+        if(player.team.equals(nexusTeam.teamName)) return;
+        if(nexusTeam.money <= 0){
+            e.getPlayer().sendMessage(Man10BankRobber.prefix + "§c§lこのチームの金庫は残金がありません");
+            return;
+        }
+        //敵ネクサス破壊中
+
+        int removeValue = 0;
+        if(game.nexusMode == NexusMode.FIXED){
+            removeValue += game.nexusModeValue;
+        }else if(game.nexusMode == NexusMode.PERCENTAGE){
+            removeValue += nexusTeam.initialMoney * (1/game.nexusModeValue);
+        }
+
+        if(removeValue > nexusTeam.money){
+            removeValue = nexusTeam.money;
+        }
+        if(!player.carryingMoney.containsKey(nexusTeam.teamName)) player.carryingMoney.put(nexusTeam.teamName, 0);
+        player.carryingMoney.put(nexusTeam.teamName, player.carryingMoney.get(nexusTeam.teamName) + removeValue);
+        nexusTeam.money -= removeValue;
+
+        e.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l" + BaseUtils.priceString(removeValue) + "円を奪った");
+        // message?
+    }
+
+    @EventHandler
+    public void onNexusReturn(PlayerInteractEvent e){
+        if(e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if(e.getClickedBlock() == null) return;
+        RobberTeam nexusTeam = game.getNexus(e.getClickedBlock().getLocation());
+        if(nexusTeam == null) return;
+        e.setCancelled(true);
+        RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
+        if(!player.team.equals(nexusTeam.teamName)) return;
+        for(String team: player.carryingMoney.keySet()){
+            int balance = player.carryingMoney.get(team);
+            nexusTeam.money += balance;
+            e.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l" + BaseUtils.priceString(balance) + "円を届けた");
+            player.carryingMoney.remove(team);
+        }
+        player.carryingMoney.clear();
+    }
+
+
 
 }

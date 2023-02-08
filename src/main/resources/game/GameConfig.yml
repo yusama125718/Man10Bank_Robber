@@ -6,11 +6,13 @@ teams:
     nexusBlocks: null
     spawnPoint: null
     prefix: "§b§l[青チーム]§f"
+    barColor: BLUE
   yellow:
     alias: "黄チーム"
     nexusBlocks: null
     spawnPoint: null
     prefix: "§e§l[黄チーム]§f"
+    barColor: YELLOW
 time:
   ENTRY: 60
   READY: 60
