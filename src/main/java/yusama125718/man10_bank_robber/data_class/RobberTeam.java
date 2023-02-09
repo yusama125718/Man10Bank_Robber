@@ -85,8 +85,9 @@ public class RobberTeam {
     public void cleanUpTeam(){
         for(RobberPlayer player : game.getPlayersInTeam(teamName)){
             player.returnCarryingMoney();
+            if(player.getPlayer() == null) continue;
             player.getPlayer().setBedSpawnLocation(Man10BankRobber.lobbyLocation, true);
-            player.getPlayer().setHealth(0);
+            player.getPlayer().teleport(Man10BankRobber.lobbyLocation);
         }
         finished = true;
     }
@@ -101,6 +102,7 @@ public class RobberTeam {
 
     public void teleportAllPlayersToSpawn(){
         for(RobberPlayer player: game.getPlayersInTeam(teamName)){
+            if(player.getPlayer() == null) continue;
             player.getPlayer().teleport(spawnPoint);
         }
     }
@@ -111,6 +113,7 @@ public class RobberTeam {
         if(winSplit < 0) winSplit = 0;
         for(RobberPlayer player : players){
             int value = player.betPrice + winSplit;
+            if(player.getPlayer() == null) continue;
             player.giveMoney(value);
             Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("end.winner.payment")
                     .replace("{player}", player.getPlayer().getName())
@@ -122,6 +125,7 @@ public class RobberTeam {
         List<RobberPlayer> players = game.getPlayersInTeam(teamName);
         for(RobberPlayer player : players){
             int value = (player.betPrice/initialMoney)*money;
+            if(player.getPlayer() == null) continue;
             player.giveMoney(value);
             Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("end.loser.payment")
                     .replace("{player}", player.getPlayer().getName())

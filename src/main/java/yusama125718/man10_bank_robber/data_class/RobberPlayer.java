@@ -50,7 +50,7 @@ public class RobberPlayer {
             carryingMoney.remove(teamName);
             RobberTeam enemyTeam = game.getTeam(teamName);
             Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("game.nexus.deliver")
-                    .replace("{team.source}", game.getTeam(team).alias)
+                    .replace("{team.source}", game.getTeam(teamName).alias)
                     .replace("{team.target}", getTeam().alias)
                     .replace("{money}", BaseUtils.priceString(balance))
             );

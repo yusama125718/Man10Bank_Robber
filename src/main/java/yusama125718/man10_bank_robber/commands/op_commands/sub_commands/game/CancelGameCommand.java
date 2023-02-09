@@ -24,7 +24,10 @@ public class CancelGameCommand implements CommandExecutor {
             return true;
         }
         for(RobberPlayer player: game.players.values()){
+            if(player.getPlayer() == null) continue;
             player.giveMoney(player.betPrice);
+            player.getPlayer().teleport(Man10BankRobber.lobbyLocation);
+            player.getPlayer().setBedSpawnLocation(Man10BankRobber.lobbyLocation, true);
         }
         Man10BankRobber.api.endGame();
         sender.sendMessage(Man10BankRobber.prefix + "§a§lゲームをキャンセルしました");

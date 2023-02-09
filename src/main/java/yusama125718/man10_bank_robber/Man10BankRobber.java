@@ -9,6 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import yusama125718.man10_bank_robber.commands.normal_commands.NormalCommands;
 import yusama125718.man10_bank_robber.commands.op_commands.OpCommands;
@@ -18,7 +21,7 @@ import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public final class Man10BankRobber extends JavaPlugin {
+public final class Man10BankRobber extends JavaPlugin implements Listener {
     public static String prefix;
     public static FileConfiguration config;
     public static FileConfiguration messages;
@@ -73,6 +76,13 @@ public final class Man10BankRobber extends JavaPlugin {
     public static String getMessage(String key){
         if(!messages.contains(key)) return "";
         return messages.getString(key);
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e){
+        if(currentGame == null) return;
+        e.getPlayer().teleport(Man10BankRobber.lobbyLocation);
+        e.getPlayer().setBedSpawnLocation(Man10BankRobber.lobbyLocation, true);
     }
 
 }

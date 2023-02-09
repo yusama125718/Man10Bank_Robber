@@ -49,7 +49,7 @@ public class InGameState extends RobberGameStateData {
                 long secondsTillRespawn = (respawnTime - (System.currentTimeMillis()/1000L - player.diedTime));
                 if(respawnTime > 0) player.getPlayer().sendMessage(Man10BankRobber.getMessage("game.respawn.wait").replace("{time}", String.valueOf(secondsTillRespawn)));
                 if(System.currentTimeMillis()/1000L - player.diedTime >= respawnTime){
-                    player.getPlayer().teleport(player.getTeam().spawnPoint);
+                    if(player.getPlayer() != null) player.getPlayer().teleport(player.getTeam().spawnPoint);
                     player.diedTime = 0;
                 }
             }
@@ -183,14 +183,13 @@ public class InGameState extends RobberGameStateData {
         player.diedTime = System.currentTimeMillis()/1000L;
         player.getPlayer().setBedSpawnLocation(player.getTeam().respawnLocation, true);
         player.getPlayer().spigot().respawn();
-        player.getPlayer().openInventory(Bukkit.createInventory(null, 9));
-        player.getPlayer().closeInventory();
     }
 
     @EventHandler
     public void onLeaveDeath(PlayerQuitEvent e){
         RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
         if(player == null) return;
+        player.getPlayer().setBedSpawnLocation(player.getTeam().respawnLocation, true);
         player.returnCarryingMoney();
     }
 
@@ -199,6 +198,7 @@ public class InGameState extends RobberGameStateData {
         RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
         if(player == null) return;
         player.diedTime = System.currentTimeMillis()/1000L;
+        player.getPlayer().setBedSpawnLocation(player.getTeam().respawnLocation, true);
         player.getPlayer().teleport(player.getTeam().respawnLocation);
     }
 

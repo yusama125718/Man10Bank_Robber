@@ -52,7 +52,7 @@ public class ReadyState extends RobberGameStateData {
             RobberTeam team = game.getTeam(assignedTeam);
             assigningPlayer.team = team.teamName;
             game.players.put(uuid, assigningPlayer);
-            assigningPlayer.getPlayer().sendMessage(Man10BankRobber.getMessage("ready.team.picked").replace("{team}", team.alias));
+            if(assigningPlayer.getPlayer() != null) assigningPlayer.getPlayer().sendMessage(Man10BankRobber.getMessage("ready.team.picked").replace("{team}", team.alias));
         }
 
         //当選しなかったプレイヤーに返金
@@ -67,6 +67,7 @@ public class ReadyState extends RobberGameStateData {
 
         //準備エリアへ転送
         for(RobberPlayer player: game.players.values()){
+            if(player.getPlayer() == null) continue;
             player.getPlayer().teleport(game.readyLocation);
         }
         Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("ready.message"));

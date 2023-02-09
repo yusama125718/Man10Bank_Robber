@@ -13,10 +13,7 @@ import yusama125718.man10_bank_robber.data_class.states.ReadyState;
 import yusama125718.man10_bank_robber.enums.RobberGameStateType;
 import yusama125718.man10_bank_robber.enums.NexusMode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class RobberGame {
 
@@ -89,7 +86,7 @@ public class RobberGame {
         }catch (Exception e){
         }
         if(respawnTime.isEmpty()){
-            respawnTime.put(999999999, 0);
+            respawnTime.put(0, 1);
         }
         // 残り時間通知リスト
         notifyRemainingTimeMap = this.config.getIntegerList("remainingTimeNotification");
@@ -202,12 +199,17 @@ public class RobberGame {
     }
 
     public Integer getRespawnTime(){
-        for(Integer i : respawnTime.keySet()){
+        if(respawnTime.isEmpty()) return 1;
+        int currentKey = -1;
+        List<Integer> keys = new ArrayList<>(respawnTime.keySet());
+        Collections.sort(keys);
+        for(Integer i : keys){
             if(currentGameTime <  i){
                 return respawnTime.get(i);
             }
+            currentKey = i;
         }
-        return 1;
+        return respawnTime.get(currentKey);
     }
 
 
