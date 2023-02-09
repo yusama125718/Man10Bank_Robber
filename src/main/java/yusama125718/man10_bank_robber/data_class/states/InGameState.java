@@ -15,6 +15,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import yusama125718.man10_bank_robber.Man10BankRobber;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
 import yusama125718.man10_bank_robber.data_class.RobberGameStateData;
@@ -30,6 +32,8 @@ public class InGameState extends RobberGameStateData {
     RobberGame game = Man10BankRobber.currentGame;
     Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Man10BankRobber");
 
+    BukkitTask respawnTimer;
+
     @Override
     public void start() {
         //プレイヤーをスポーン位置にテレポート
@@ -37,6 +41,16 @@ public class InGameState extends RobberGameStateData {
             team.initializeTeam();
             team.teleportAllPlayersToSpawn();
         }
+        respawnTimer = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for(RobberPlayer player : game.players.values()){
+                if(player.diedTime == 0) continue;
+                player.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§lリスポーンまで" + (5 - (System.currentTimeMillis()/1000L - player.diedTime)) + "秒...");
+                if(System.currentTimeMillis()/1000L - player.diedTime >= 5){
+                    player.getPlayer().teleport(player.getTeam().spawnPoint);
+                    player.diedTime = 0;
+                }
+            }
+        }, 20, 20);
         timerTillNextState.start();
     }
 
@@ -47,6 +61,7 @@ public class InGameState extends RobberGameStateData {
             team.bar.setVisible(false);
             team.bar = null;
         }
+        respawnTimer.cancel();
     }
 
     @Override
@@ -84,14 +99,14 @@ public class InGameState extends RobberGameStateData {
     //ボスバー処理
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e){
+    public void onJoinBarEvent(PlayerJoinEvent e){
         for(RobberTeam team: game.teams.values()){
             team.bar.addPlayer(e.getPlayer());
         }
     }
 
     @EventHandler
-    public void onJoin(PlayerQuitEvent e){
+    public void onQuitBarEvent(PlayerQuitEvent e){
         for(RobberTeam team: game.teams.values()){
             team.bar.removePlayer(e.getPlayer());
         }
@@ -145,8 +160,28 @@ public class InGameState extends RobberGameStateData {
         RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
         if(player == null) return;
         player.returnCarryingMoney();
-        player.getPlayer().setBedSpawnLocation(player.getTeam().spawnPoint, true);
+        player.diedTime = System.currentTimeMillis()/1000L;
+        player.getPlayer().setBedSpawnLocation(player.getTeam().respawnLocation, true);
+        player.getPlayer().spigot().respawn();
+        player.getPlayer().openInventory(Bukkit.createInventory(null, 9));
+        player.getPlayer().closeInventory();
     }
+
+    @EventHandler
+    public void onLeaveDeath(PlayerQuitEvent e){
+        RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
+        if(player == null) return;
+        player.returnCarryingMoney();
+    }
+
+    @EventHandler
+    public void onJoinDeath(PlayerJoinEvent e){
+        RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
+        if(player == null) return;
+        player.diedTime = System.currentTimeMillis()/1000L;
+        player.getPlayer().teleport(player.getTeam().respawnLocation);
+    }
+
 
 
 

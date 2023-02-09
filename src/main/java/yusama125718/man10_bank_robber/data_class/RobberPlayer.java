@@ -15,7 +15,7 @@ public class RobberPlayer {
     }
     public int betPrice;
     public String team;
-
+    public long diedTime;
     public HashMap<String, Integer> carryingMoney = new HashMap<>();
 
     public Player getPlayer(){

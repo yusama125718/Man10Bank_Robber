@@ -11,6 +11,7 @@ import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.TestComm
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.SetLobbyLocation;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.SetReadyLocation;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.AddTeamNexusLocationCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.SetTeamRespawnLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.SetTeamSpawnLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.CancelGameCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.SetCurrentStateTimeCommand;
@@ -51,10 +52,23 @@ public class OpCommands extends SCommandRouter {
                         .addArgument(new SCommandArgument().addAlias("ゲーム名"))
                         .addArgument(new SCommandArgument().addAlias("team"))
                         .addArgument(new SCommandArgument().addAlias("チーム内部名"))
-                        .addArgument(new SCommandArgument().addAllowedString("spawnPoint"))
-                        .addRequiredPermission("man10bankrobber.op.config.team.spawnPoint")
+                        .addArgument(new SCommandArgument().addAllowedString("spawnLocation"))
+                        .addRequiredPermission("man10bankrobber.op.config.team.spawnLocation")
                         .addExplanation("チームのスポーンをセットする").
                         setExecutor(new SetTeamSpawnLocationCommand(plugin))
+        );
+
+        addCommand(
+                new SCommandObject()
+                        .addArgument(new SCommandArgument().addAllowedString("config"))
+                        .addArgument(new SCommandArgument().addAllowedString("set"))
+                        .addArgument(new SCommandArgument().addAlias("ゲーム名"))
+                        .addArgument(new SCommandArgument().addAlias("team"))
+                        .addArgument(new SCommandArgument().addAlias("チーム内部名"))
+                        .addArgument(new SCommandArgument().addAllowedString("respawnLocation"))
+                        .addRequiredPermission("man10bankrobber.op.config.team.respawnLocation")
+                        .addExplanation("チームのリススポーンをセットする").
+                        setExecutor(new SetTeamRespawnLocationCommand(plugin))
         );
 
         addCommand(

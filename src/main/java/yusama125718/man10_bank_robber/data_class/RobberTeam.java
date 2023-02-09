@@ -34,6 +34,7 @@ public class RobberTeam {
 
     //ロケーション
     public Location spawnPoint;
+    public Location respawnLocation;
 
     // nexus
     List<Location> nexusBlocks = new ArrayList<>();
@@ -50,13 +51,18 @@ public class RobberTeam {
         prefix = this.config.getString("prefix", null);
         barColor = this.config.getString("barColor", "WHITE");
 
-        spawnPoint = this.config.getLocation("spawnPoint");
+        spawnPoint = this.config.getLocation("spawnLocation");
+        respawnLocation = this.config.getLocation("respawnLocation");
         nexusBlocks = (List<Location>) this.config.getList("nexusBlocks");
     }
 
     public boolean canPlayGame(){
         if(spawnPoint == null){
             Man10BankRobber.logWarn(teamName + "のスポーンがセットされていません");
+            return false;
+        }
+        if(respawnLocation == null){
+            Man10BankRobber.logWarn(teamName + "のリスポーンが設定されていません");
             return false;
         }
         if(nexusBlocks == null || nexusBlocks.size() == 0){
