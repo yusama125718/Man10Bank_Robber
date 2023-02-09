@@ -1,0 +1,17 @@
+items:
+  ak47:
+    alias: "test"
+    onBuyCommands:
+      - "broadcast buy {player}"
+    onRespawnCommands:
+      - "broadcast respawn"
+    onKillCommands:
+      - "broadcast kill"
+    onNexusBreakCommands:
+      - "broadcast nexusBreak"
+    limit: 1
+    groups:
+      - "test"
+
+groupLimits:
+  test: 1

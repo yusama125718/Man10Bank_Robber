@@ -142,6 +142,7 @@ public class RobberGame {
     public boolean registerPlayer(Player p, int betPrice){
         RobberPlayer player = new RobberPlayer(p.getUniqueId());
         player.betPrice = betPrice;
+        player.buyCredits = betPrice - Man10BankRobber.currentGame.minimumBet;
 
         if(!player.takeMoney(player.betPrice)){
             return false;

@@ -21,3 +21,7 @@ end.winner.message: "勝者:{team}"
 end.loser.message: ""
 end.winner.payment: "{player}は{money}円を獲得した"
 end.loser.payment: ""
+
+buy.limited: "購入制限に達しました"
+buy.noMoney: "現金が不足しています"
+buy.success: "{name}を購入しました 残り {money}円です"

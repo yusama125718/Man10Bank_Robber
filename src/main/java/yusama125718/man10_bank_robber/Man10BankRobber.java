@@ -25,7 +25,7 @@ public final class Man10BankRobber extends JavaPlugin implements Listener {
     public static String prefix;
     public static FileConfiguration config;
     public static FileConfiguration messages;
-    public static ExecutorService threadPool = Executors.newCachedThreadPool();
+    public static FileConfiguration shops;
     public static VaultAPI vault;
     public static Man10BankRobberAPI api;
     public static Location lobbyLocation;
@@ -36,9 +36,11 @@ public final class Man10BankRobber extends JavaPlugin implements Listener {
         // Plugin startup logic
         saveDefaultConfig();
         SConfigFile.saveResource(this, "messages.yml", getDataFolder() + File.separator + "messages.yml");
+        SConfigFile.saveResource(this, "shops.yml", getDataFolder() + File.separator + "shops.yml");
         config = getConfig();
         prefix = getConfig().getString("prefix");
         messages = SConfigFile.getConfigFile(getDataFolder() + File.separator + "messages.yml");
+        shops = SConfigFile.getConfigFile(getDataFolder() + File.separator + "shops.yml");
 
         vault = new VaultAPI();
         lobbyLocation = config.getLocation("lobbyLocation");

@@ -12,10 +12,14 @@ public class RobberPlayer {
     private UUID playerUUID;
     public RobberPlayer(UUID player){
         this.playerUUID = player;
+        this.shop = new RobberShop(this);
     }
     public int betPrice;
+    public int buyCredits;
     public String team;
     public long diedTime;
+
+    public RobberShop shop;
     public HashMap<String, Integer> carryingMoney = new HashMap<>();
 
     public Player getPlayer(){
