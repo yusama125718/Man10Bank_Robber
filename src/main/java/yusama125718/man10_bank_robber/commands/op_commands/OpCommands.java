@@ -13,6 +13,7 @@ import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.S
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.AddTeamNexusLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.SetTeamRespawnLocationCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.config.team.SetTeamSpawnLocationCommand;
+import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.BuyCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.CancelGameCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.SetCurrentStateTimeCommand;
 import yusama125718.man10_bank_robber.commands.op_commands.sub_commands.game.StartGameCommand;
@@ -104,6 +105,7 @@ public class OpCommands extends SCommandRouter {
                         setExecutor(new SetLobbyLocation(plugin))
         );
 
+
         //ゲーム系コマンド
         addCommand(
                 new SCommandObject()
@@ -114,6 +116,7 @@ public class OpCommands extends SCommandRouter {
                         .addExplanation("ゲームを開始する").
                         setExecutor(new StartGameCommand(plugin))
         );
+
         addCommand(
                 new SCommandObject()
                         .addArgument(new SCommandArgument().addAllowedString("game"))
@@ -140,6 +143,21 @@ public class OpCommands extends SCommandRouter {
                         .addExplanation("テストコマンド").
                         setExecutor(new TestCommand(plugin))
         );
+
+
+        addCommand(
+                new SCommandObject()
+                        .addArgument(new SCommandArgument().addAllowedString("buy"))
+                        .addArgument(new SCommandArgument().addAlias("プレイヤーUUID"))
+                        .addArgument(new SCommandArgument().addAlias("アイテムID"))
+                        .addArgument(new SCommandArgument().addAlias("値段"))
+                        .addRequiredPermission("man10bankrobber.op.buy")
+                        .addExplanation("アイテムを購入する").
+                        setExecutor(new BuyCommand(plugin))
+        );
+
+
+
     }
 
 }

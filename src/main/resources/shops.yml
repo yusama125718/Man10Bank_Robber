@@ -2,7 +2,7 @@ items:
   ak47:
     alias: "test"
     onBuyCommands:
-      - "broadcast buy {player}"
+      - "broadcast buy {name}"
     onRespawnCommands:
       - "broadcast respawn"
     onKillCommands:
@@ -13,5 +13,5 @@ items:
     groups:
       - "test"
 
-groupLimits:
+groups:
   test: 1

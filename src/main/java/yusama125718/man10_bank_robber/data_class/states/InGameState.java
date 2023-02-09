@@ -156,6 +156,7 @@ public class InGameState extends RobberGameStateData {
         }
         if(!player.carryingMoney.containsKey(nexusTeam.teamName)) player.carryingMoney.put(nexusTeam.teamName, 0);
         player.carryingMoney.put(nexusTeam.teamName, player.carryingMoney.get(nexusTeam.teamName) + removeValue);
+        player.shop.executeAllCommands("onNexusBreakCommands");
         nexusTeam.money -= removeValue;
         Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("game.nexus.break")
                 .replace("{team}", nexusTeam.alias)
@@ -181,8 +182,17 @@ public class InGameState extends RobberGameStateData {
         if(player == null) return;
         player.returnCarryingMoney();
         player.diedTime = System.currentTimeMillis()/1000L;
+        player.shop.executeAllCommands("onRespawnCommands");
         player.getPlayer().setBedSpawnLocation(player.getTeam().respawnLocation, true);
         player.getPlayer().spigot().respawn();
+    }
+
+    @EventHandler
+    public void onKill(PlayerDeathEvent e){
+        if(e.getPlayer().getKiller() == null) return;
+        RobberPlayer player = game.getPlayer(e.getPlayer().getKiller().getUniqueId());
+        if(player == null) return;
+        player.shop.executeAllCommands("onKillCommands");
     }
 
     @EventHandler

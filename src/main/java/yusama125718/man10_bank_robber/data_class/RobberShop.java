@@ -1,6 +1,7 @@
 package yusama125718.man10_bank_robber.data_class;
 
 import com.shojabon.mcutils.Utils.BaseUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import yusama125718.man10_bank_robber.Man10BankRobber;
@@ -34,6 +35,7 @@ public class RobberShop {
             boughtItemCount.put(itemId, 0);
         }
         boughtItemCount.put(itemId, boughtItemCount.get(itemId)+1);
+        executeCommand(itemId, "onBuyCommands");
         player.buyCredits -= price;
         player.getPlayer().sendMessage(Man10BankRobber.getMessage("buy.success")
                 .replace("{money}", BaseUtils.priceString(player.buyCredits))
@@ -50,11 +52,11 @@ public class RobberShop {
     }
 
     public int getItemBuyLimit(String itemId){
-        return Man10BankRobber.shops.getInt("items." + itemId + ".limit", 0);
+        return Man10BankRobber.shops.getInt("items." + itemId + ".limit", 999999);
     }
 
     public int getGroupBuyLimit(String groupId){
-        return Man10BankRobber.shops.getInt("groups." + groupId + ".limit", 0);
+        return Man10BankRobber.shops.getInt("groups." + groupId + ".limit", 999999);
     }
 
     public boolean canBuyItem(String itemId){
@@ -67,6 +69,20 @@ public class RobberShop {
             if(getGroupBuyLimit(group) <= currentItemCount) return false;
         }
         return true;
+    }
+
+    public void executeCommand(String itemId, String commandListName){
+        for(String command : Man10BankRobber.shops.getStringList("items." + itemId + "." + commandListName)){
+            Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), command
+                    .replace("{name}", player.getPlayer().getName())
+            );
+        }
+    }
+
+    public void executeAllCommands(String commandListName){
+        for(String itemId: boughtItemCount.keySet()){
+            executeCommand(itemId, commandListName);
+        }
     }
 
 
