@@ -89,9 +89,6 @@ public class RobberTeam {
             player.getPlayer().setHealth(0);
         }
         finished = true;
-        Bukkit.broadcast(Component.text(alias + "は敗北しました"));
-
-        int inGameTeams = 0;
     }
 
     //バー

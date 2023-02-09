@@ -31,3 +31,7 @@ bet:
 players:
   minimumPlayersPerTeam: 3
   maximumPlayersPerTeam: 5
+
+respawnTime:
+  200: 0
+  250: 5

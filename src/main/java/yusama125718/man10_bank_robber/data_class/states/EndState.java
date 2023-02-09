@@ -36,8 +36,10 @@ public class EndState extends RobberGameStateData {
         for(RobberTeam team: game.teams.values()){
             if(team.calculateDifferenceFromStart() == biggestTeam){
                 team.payBackAsWinner();
+                Bukkit.broadcastMessage(team.alias + "チームの勝ち");
             }else{
                 team.payBackAsLoser();
+                Bukkit.broadcastMessage(team.alias + "チームの負け");
             }
         }
 

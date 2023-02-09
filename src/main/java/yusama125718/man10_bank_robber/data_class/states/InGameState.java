@@ -44,8 +44,9 @@ public class InGameState extends RobberGameStateData {
         respawnTimer = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for(RobberPlayer player : game.players.values()){
                 if(player.diedTime == 0) continue;
-                player.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§lリスポーンまで" + (5 - (System.currentTimeMillis()/1000L - player.diedTime)) + "秒...");
-                if(System.currentTimeMillis()/1000L - player.diedTime >= 5){
+                int respawnTime = game.getRespawnTime(timerTillNextState.originalTime - timerTillNextState.remainingTime);
+                if(respawnTime > 0) player.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§lリスポーンまで" + (respawnTime - (System.currentTimeMillis()/1000L - player.diedTime)) + "秒...");
+                if(System.currentTimeMillis()/1000L - player.diedTime >= respawnTime){
                     player.getPlayer().teleport(player.getTeam().spawnPoint);
                     player.diedTime = 0;
                 }

@@ -1,5 +1,6 @@
 package yusama125718.man10_bank_robber;
 
+import com.shojabon.mcutils.Utils.SConfigFile;
 import com.shojabon.mcutils.Utils.STimer;
 import com.shojabon.mcutils.Utils.VaultAPI;
 import net.kyori.adventure.text.Component;
@@ -13,12 +14,14 @@ import yusama125718.man10_bank_robber.commands.normal_commands.NormalCommands;
 import yusama125718.man10_bank_robber.commands.op_commands.OpCommands;
 import yusama125718.man10_bank_robber.data_class.RobberGame;
 
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class Man10BankRobber extends JavaPlugin {
     public static String prefix;
     public static FileConfiguration config;
+    public static FileConfiguration messages;
     public static ExecutorService threadPool = Executors.newCachedThreadPool();
     public static VaultAPI vault;
     public static Man10BankRobberAPI api;
@@ -29,8 +32,10 @@ public final class Man10BankRobber extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         saveDefaultConfig();
+        SConfigFile.saveResource(this, "messages.yml", getDataFolder() + File.separator + "messages.yml");
         config = getConfig();
         prefix = getConfig().getString("prefix");
+        messages = SConfigFile.getConfigFile(getDataFolder() + File.separator + "messages.yml");
 
         vault = new VaultAPI();
         lobbyLocation = config.getLocation("lobbyLocation");
