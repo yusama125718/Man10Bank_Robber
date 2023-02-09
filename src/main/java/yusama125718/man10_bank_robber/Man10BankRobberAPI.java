@@ -28,10 +28,6 @@ public class Man10BankRobberAPI {
             RobberGame game = Man10BankRobber.currentGame;
             if(game == null) return;
 
-            for(RobberPlayer player: game.players.values()){
-                player.giveMoney(player.betPrice);
-            }
-
             game.setGameState(RobberGameStateType.NO_GAME);
             Man10BankRobber.currentGame = null;
         });

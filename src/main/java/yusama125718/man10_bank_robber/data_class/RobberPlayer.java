@@ -31,7 +31,13 @@ public class RobberPlayer {
             RobberTeam team = Man10BankRobber.currentGame.getTeam(teamName);
             int balance = carryingMoney.get(teamName);
             team.money += balance;
-            getPlayer().sendMessage(Man10BankRobber.prefix + "§c§l" + BaseUtils.priceString(balance) + "円が返金された");
+
+            Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("game.nexus.return")
+                    .replace("{team}", team.alias)
+                    .replace("{player}", getPlayer().getName())
+                    .replace("{money}", BaseUtils.priceString(balance))
+            );
+
             carryingMoney.remove(teamName);
         }
     }
@@ -41,9 +47,13 @@ public class RobberPlayer {
         for(String teamName: carryingMoney.keySet()){
             int balance = carryingMoney.get(teamName);
             game.getTeam(team).money += balance;
-            getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l" + BaseUtils.priceString(balance) + "円を届けた");
             carryingMoney.remove(teamName);
             RobberTeam enemyTeam = game.getTeam(teamName);
+            Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("game.nexus.deliver")
+                    .replace("{team.source}", game.getTeam(team).alias)
+                    .replace("{team.target}", getTeam().alias)
+                    .replace("{money}", BaseUtils.priceString(balance))
+            );
             if(enemyTeam.money <= 0){
                 game.makeTeamLose(enemyTeam.teamName);
             }

@@ -18,7 +18,7 @@ public class EntryState extends RobberGameStateData {
 
     @Override
     public void start() {
-        Man10BankRobber.broadcastMessage("§a§l選手登録を開始しました\n試合に参加したい者は選手登録をしてください");
+        Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("entry.message"));
         timerTillNextState.start();
     }
 
@@ -36,7 +36,7 @@ public class EntryState extends RobberGameStateData {
 
     @Override
     public void defineBossBar() {
-        String barTitle = "§c§l出場者登録中 §a§l残り§e§l{time}§a§l秒 現在登録者§e§l{registered}§a§l人";
+        String barTitle = Man10BankRobber.getMessage("entry.bar");
         this.bar = Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID);
         timerTillNextState.linkBossBar(bar, true);
         timerTillNextState.addOnIntervalEvent(e -> bar.setTitle(barTitle.replace("{registered}", String.valueOf(game.preRegisteredPlayers.size())).replace("{time}", String.valueOf(e))));

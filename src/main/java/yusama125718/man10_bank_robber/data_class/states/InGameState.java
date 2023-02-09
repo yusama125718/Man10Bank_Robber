@@ -42,10 +42,12 @@ public class InGameState extends RobberGameStateData {
             team.teleportAllPlayersToSpawn();
         }
         respawnTimer = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            game.currentGameTime += 1;
             for(RobberPlayer player : game.players.values()){
                 if(player.diedTime == 0) continue;
-                int respawnTime = game.getRespawnTime(timerTillNextState.originalTime - timerTillNextState.remainingTime);
-                if(respawnTime > 0) player.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§lリスポーンまで" + (respawnTime - (System.currentTimeMillis()/1000L - player.diedTime)) + "秒...");
+                int respawnTime = game.getRespawnTime();
+                long secondsTillRespawn = (respawnTime - (System.currentTimeMillis()/1000L - player.diedTime));
+                if(respawnTime > 0) player.getPlayer().sendMessage(Man10BankRobber.getMessage("game.respawn.wait").replace("{time}", String.valueOf(secondsTillRespawn)));
                 if(System.currentTimeMillis()/1000L - player.diedTime >= respawnTime){
                     player.getPlayer().teleport(player.getTeam().spawnPoint);
                     player.diedTime = 0;
@@ -68,6 +70,22 @@ public class InGameState extends RobberGameStateData {
     @Override
     public void defineTimer(){
         timerTillNextState.setRemainingTime(game.timeIN_GAME);
+        timerTillNextState.addOnIntervalEvent(remainingTime -> {
+            if(!game.notifyRemainingTimeMap.contains(remainingTime)) return;
+            int remainingMinutes = remainingTime/60;
+            int remainingSeconds = remainingTime%60;
+
+            String result = "";
+            if(remainingMinutes != 0) result += remainingMinutes + "分";
+            if(remainingSeconds != 0) result += remainingSeconds + "秒";
+
+            if(result.equals("")) result = "0秒";
+
+
+            Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("game.time.remaining")
+                    .replace("{time}", result));
+
+        });
         timerTillNextState.addOnEndEvent(() -> {
             game.setGameState(RobberGameStateType.END);
         });
@@ -75,7 +93,7 @@ public class InGameState extends RobberGameStateData {
 
     @Override
     public void defineBossBar() {
-        String title = "§c§l試合中 §a§l残り§e§l{time}§a§l秒";
+        String title = Man10BankRobber.getMessage("game.bar");
         this.bar = Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID);
         timerTillNextState.linkBossBar(bar, true);
         timerTillNextState.addOnIntervalEvent(e -> bar.setTitle(title.replace("{time}", String.valueOf(e))));
@@ -121,7 +139,7 @@ public class InGameState extends RobberGameStateData {
         RobberPlayer player = game.getPlayer(e.getPlayer().getUniqueId());
         if(player.team.equals(nexusTeam.teamName)) return;
         if(nexusTeam.money <= 0){
-            e.getPlayer().sendMessage(Man10BankRobber.prefix + "§c§lこのチームの金庫は残金がありません");
+            e.getPlayer().sendMessage(Man10BankRobber.getMessage("game.nexus.noMoney"));
             return;
         }
         //敵ネクサス破壊中
@@ -139,9 +157,10 @@ public class InGameState extends RobberGameStateData {
         if(!player.carryingMoney.containsKey(nexusTeam.teamName)) player.carryingMoney.put(nexusTeam.teamName, 0);
         player.carryingMoney.put(nexusTeam.teamName, player.carryingMoney.get(nexusTeam.teamName) + removeValue);
         nexusTeam.money -= removeValue;
-
-        e.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l" + BaseUtils.priceString(removeValue) + "円を奪った");
-        // message?
+        Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("game.nexus.break")
+                .replace("{team}", nexusTeam.alias)
+                .replace("{money}", BaseUtils.priceString(removeValue))
+        );
     }
 
     @EventHandler

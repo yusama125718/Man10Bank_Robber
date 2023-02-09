@@ -26,7 +26,7 @@ public class SetTeamSpawnLocationCommand implements CommandExecutor {
             Man10BankRobber.senderWarn(sender, "ゲームが存在しません");
             return false;
         }
-        config.set("teams." + args[4] + ".spawnPoint", ((Player) sender).getLocation());
+        config.set("teams." + args[4] + ".spawnLocation", ((Player) sender).getLocation());
         try {
             config.save(new File(filePath));
         } catch (IOException e) {

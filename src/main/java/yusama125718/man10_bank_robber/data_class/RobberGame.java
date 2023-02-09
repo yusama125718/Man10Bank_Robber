@@ -49,6 +49,9 @@ public class RobberGame {
     public int timeREADY = 60;
     public int timeIN_GAME = 300;
 
+    public int currentGameTime = 0;
+    public List<Integer> notifyRemainingTimeMap = new ArrayList<>();
+
     //リスポーン時間マップ
     public HashMap<Integer, Integer> respawnTime = new HashMap<>();
     public RobberGame(Man10BankRobber plugin, String gameName, FileConfiguration config){
@@ -81,7 +84,6 @@ public class RobberGame {
         timeIN_GAME = this.config.getInt("time.IN_GAME", 300);
         try{
             for(String respawnKey : this.config.getConfigurationSection("respawnTime").getKeys(false)){
-                Bukkit.broadcastMessage(Integer.parseInt(respawnKey) + " " + this.config.getInt("respawnTime." + respawnKey));
                 respawnTime.put(Integer.parseInt(respawnKey), this.config.getInt("respawnTime." + respawnKey));
             }
         }catch (Exception e){
@@ -89,6 +91,8 @@ public class RobberGame {
         if(respawnTime.isEmpty()){
             respawnTime.put(999999999, 0);
         }
+        // 残り時間通知リスト
+        notifyRemainingTimeMap = this.config.getIntegerList("remainingTimeNotification");
         // チームデータをロードする
         ConfigurationSection teamsData = this.config.getConfigurationSection("teams");
         if(teamsData != null){
@@ -197,9 +201,9 @@ public class RobberGame {
 
     }
 
-    public Integer getRespawnTime(int currentTime){
+    public Integer getRespawnTime(){
         for(Integer i : respawnTime.keySet()){
-            if(currentTime <  i){
+            if(currentGameTime <  i){
                 return respawnTime.get(i);
             }
         }

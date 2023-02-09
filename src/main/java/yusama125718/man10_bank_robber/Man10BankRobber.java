@@ -66,7 +66,13 @@ public final class Man10BankRobber extends JavaPlugin {
 
     public static void senderWarn(CommandSender sender, String message){sender.sendMessage(prefix + "§c§l" + message);}
     public static void broadcastMessage(String message){
+        if(message.equals("")) return;
         Bukkit.broadcast(Component.text(Man10BankRobber.prefix + message));
+    }
+
+    public static String getMessage(String key){
+        if(!messages.contains(key)) return "";
+        return messages.getString(key);
     }
 
 }

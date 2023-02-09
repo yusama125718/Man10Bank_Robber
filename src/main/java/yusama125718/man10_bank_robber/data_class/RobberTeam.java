@@ -110,14 +110,23 @@ public class RobberTeam {
         int winSplit = (money - calculateTotalBet())/players.size();
         if(winSplit < 0) winSplit = 0;
         for(RobberPlayer player : players){
-            player.giveMoney(player.betPrice + winSplit);
+            int value = player.betPrice + winSplit;
+            player.giveMoney(value);
+            Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("end.winner.payment")
+                    .replace("{player}", player.getPlayer().getName())
+                    .replace("{money}", BaseUtils.priceString(value)));
         }
     }
 
     public void payBackAsLoser(){
         List<RobberPlayer> players = game.getPlayersInTeam(teamName);
         for(RobberPlayer player : players){
-            player.giveMoney((player.betPrice/initialMoney)*money);
+            int value = (player.betPrice/initialMoney)*money;
+            player.giveMoney(value);
+            Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("end.loser.payment")
+                    .replace("{player}", player.getPlayer().getName())
+                    .replace("{money}", BaseUtils.priceString(value)));
+
         }
     }
 

@@ -1,5 +1,6 @@
 package yusama125718.man10_bank_robber.data_class.states;
 
+import com.shojabon.mcutils.Utils.BaseUtils;
 import com.shojabon.mcutils.Utils.SScoreboard;
 import it.unimi.dsi.fastutil.floats.Float2DoubleArrayMap;
 import org.bukkit.Bukkit;
@@ -24,6 +25,8 @@ public class EndState extends RobberGameStateData {
     @Override
     public void start() {
         //優勝者処理
+        Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("end.message"));
+
         HashMap<String, Integer> difference = new HashMap<>();
         for(RobberTeam team: game.teams.values()){
             team.cleanUpTeam();
@@ -34,12 +37,17 @@ public class EndState extends RobberGameStateData {
         int biggestTeam = Collections.max(differenceList);
 
         for(RobberTeam team: game.teams.values()){
-            if(team.calculateDifferenceFromStart() == biggestTeam){
-                team.payBackAsWinner();
-                Bukkit.broadcastMessage(team.alias + "チームの勝ち");
-            }else{
+            if(team.calculateDifferenceFromStart() != biggestTeam){
+                Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("end.loser.message")
+                        .replace("{team}", team.alias)
+                        .replace("{money}", BaseUtils.priceString(team.money)));
                 team.payBackAsLoser();
-                Bukkit.broadcastMessage(team.alias + "チームの負け");
+            }else{
+                Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("end.winner.message")
+                        .replace("{team}", team.alias)
+                        .replace("{money}", BaseUtils.priceString(team.money)));
+
+                team.payBackAsWinner();
             }
         }
 
@@ -55,13 +63,13 @@ public class EndState extends RobberGameStateData {
     public void defineTimer(){
         timerTillNextState.setRemainingTime(20);
         timerTillNextState.addOnEndEvent(() -> {
-            game.setGameState(RobberGameStateType.ENTRY);
+            Man10BankRobber.api.endGame();
         });
     }
 
     @Override
     public void defineBossBar() {
-        String title = "§c§l終了処理中 §a§l残り§e§l{time}§a§l秒";
+        String title = Man10BankRobber.getMessage("end.bar");
         this.bar = Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID);
         timerTillNextState.linkBossBar(bar, true);
         timerTillNextState.addOnIntervalEvent(e -> bar.setTitle(title.replace("{time}", String.valueOf(e))));

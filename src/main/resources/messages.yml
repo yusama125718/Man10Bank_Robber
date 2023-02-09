@@ -1,1 +1,23 @@
 entry.message: "§a§l選手登録を開始しました\n試合に参加したい者は選手登録をしてください"
+entry.bar: "§c§l出場者登録中 §a§l残り§e§l{time}§a§l秒 現在登録者§e§l{registered}§a§l人"
+
+ready.message: "§a§l準備フェーズ開始\n出場者は準備を開始してください"
+ready.bar: "§c§l選手準備フェーズ §a§l残り§e§l{time}§a§l秒"
+ready.notEnoughPlayers: "§c§l参加最低人数の{players}人に達しませんでした"
+ready.team.picked: "§a§l当選しました、あなたが配属されてるのは『{team}§a§l』です"
+ready.team.unpicked: "§c§l残念ながら選手には選ばれませんでした\n{money}円返金されます"
+
+game.bar: "§c§l試合中 §a§l残り§e§l{time}§a§l秒"
+game.respawn.wait: "§a§lリスポーンまで{time}秒..."
+game.time.remaining: "ゲーム終了まで{time}"
+game.nexus.noMoney: "§c§lこのチームのネクサスには残金がありません"
+game.nexus.break: "§c§l『{team}』のネクサスが{money}円のダメージを受けました"
+game.nexus.deliver: "『{team.source}』>>>>>>[{money}]>>>>>>『{team.target}』"
+game.nexus.return: "{player}が死亡したため『{team}』に{money}円返金された"
+
+end.bar: "§c§l終了処理中 §a§l残り§e§l{time}§a§l秒"
+end.message: "ゲーム終了!"
+end.winner.message: "勝者:{team}"
+end.loser.message: ""
+end.winner.payment: "{player}は{money}円を獲得した"
+end.loser.payment: ""

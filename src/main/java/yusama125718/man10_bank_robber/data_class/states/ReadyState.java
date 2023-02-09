@@ -1,9 +1,11 @@
 package yusama125718.man10_bank_robber.data_class.states;
 
+import com.shojabon.mcutils.Utils.BaseUtils;
 import com.shojabon.mcutils.Utils.SScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
@@ -29,7 +31,9 @@ public class ReadyState extends RobberGameStateData {
     public void start() {
         int requiredPlayerCount = game.minimumPlayersPerTeam * game.teams.size();
         if(game.preRegisteredPlayers.size() < requiredPlayerCount){
-            Man10BankRobber.broadcastMessage("§c§l参加最低人数の" + requiredPlayerCount + "人に達しませんでした");
+            Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("ready.notEnoughPlayers")
+                    .replace("{players}", String.valueOf(requiredPlayerCount)));
+
             game.setGameState(RobberGameStateType.ENTRY);
             return;
         }
@@ -47,13 +51,17 @@ public class ReadyState extends RobberGameStateData {
             game.preRegisteredPlayers.remove(uuid);
             RobberTeam team = game.getTeam(assignedTeam);
             assigningPlayer.team = team.teamName;
-            assigningPlayer.getPlayer().sendMessage(Man10BankRobber.prefix + "§a§l当選しました、あなたが配属されてるのは『" + team.alias + "§a§l』です");
             game.players.put(uuid, assigningPlayer);
+            assigningPlayer.getPlayer().sendMessage(Man10BankRobber.getMessage("ready.team.picked").replace("{team}", team.alias));
         }
 
         //当選しなかったプレイヤーに返金
         for(UUID uuid : game.preRegisteredPlayers.keySet()){
+            int value = game.preRegisteredPlayers.get(uuid).betPrice;
             game.unRegisterPlayer(uuid);
+            Player p = Bukkit.getPlayer(uuid);
+            if(p == null) continue;
+            p.sendMessage(Man10BankRobber.getMessage("ready.team.unpicked").replace("{money}", BaseUtils.priceString(value)));
         }
         game.preRegisteredPlayers.clear();
 
@@ -61,7 +69,7 @@ public class ReadyState extends RobberGameStateData {
         for(RobberPlayer player: game.players.values()){
             player.getPlayer().teleport(game.readyLocation);
         }
-        Man10BankRobber.broadcastMessage("§a§l準備フェーズ開始\n出場者は準備を開始してください");
+        Man10BankRobber.broadcastMessage(Man10BankRobber.getMessage("ready.message"));
         timerTillNextState.start();
     }
 
@@ -80,7 +88,7 @@ public class ReadyState extends RobberGameStateData {
 
     @Override
     public void defineBossBar() {
-        String title = "§c§l選手準備フェーズ §a§l残り§e§l{time}§a§l秒";
+        String title = Man10BankRobber.messages.getString("ready.bar");
         this.bar = Bukkit.createBossBar("", BarColor.WHITE, BarStyle.SOLID);
         timerTillNextState.linkBossBar(bar, true);
         timerTillNextState.addOnIntervalEvent(e -> bar.setTitle(title.replace("{time}", String.valueOf(e))));

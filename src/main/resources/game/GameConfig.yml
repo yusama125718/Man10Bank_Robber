@@ -35,3 +35,12 @@ players:
 respawnTime:
   200: 0
   250: 5
+
+remainingTimeNotification:
+  - 180
+  - 60
+  - 30
+  - 10
+  - 3
+  - 2
+  - 1
